@@ -57,7 +57,7 @@ autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Status line (:help statusline for options)
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-set statusline=%-t\ %m\ [BUF=%n]\ [OFFSET=%o]\ [LINE=%-l\/%L]\ [COL=%v]\ [ASCII=%03.3b/HEX=%03.3B]
+set statusline=%-t\ %m\ [b%n]\ [ft=%{&ft}]\ [fo=%{&fo}]\ [line=%-l\/%L]\ [col=%v]\ [ASCII=%03.3b/HEX=%03.3B]
 set laststatus=2				" always show status line
 
 
