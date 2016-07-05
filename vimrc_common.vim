@@ -50,7 +50,8 @@ set encoding=utf-8
 filetype on						" enable auto filetype detection
 filetype plugin on				" load plugins for specific file types
 filetype plugin indent on		" filetype-specific indentation
-autocmd BufNewFile,BufRead *.txt,*.md,*.mmd set filetype=text
+
+autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
 autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
 
 
@@ -102,11 +103,7 @@ set showbreak+=\\				" preceed continued lines with \
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " plain text editing
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-autocmd FileType text setlocal \
-	textwidth=64 \
-	shiftwidth=0 \
-	formatoptions=cqtan2 \
-	breakindent
+autocmd FileType text,markdown setlocal textwidth=64 shiftwidth=0 formatoptions=cqtan2 breakindent
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
