@@ -87,18 +87,26 @@ set backspace=eol,start,indent	" allow backspace to delete everything
 set report=0					" report number of lines changed
 set showmatch					" briefly jump to matching paren
 set matchpairs=(:),{:},[:],<:>	" pairs for showmatch option
+set nostartofline				" keep cursor in same col after jumps
 
-" plain text editing
-"set textwidth=80
+" formatting and indentation
+set textwidth=0					" prevent wrapping
+set tabstop=4					" # of spaces <Tab> appears as
+set noexpandtab					" do not expand <Tab> to spaces
+set shiftwidth=4				" # of spaces to use for each (auto)indent
 set linebreak					" wrap lines at 'breakat' chars
 set breakat=\ \	!@*-+;:,./?		" break line after <SP> <TAB> etc.
 set showbreak+=\\				" preceed continued lines with \
 
-" formatting and indentation
-set noexpandtab					" do not expand <Tab> to spaces
-set tabstop=4					" # of spaces <Tab> appears as
-set shiftwidth=4				" # of spaces to use for each (auto)indent
-set cindent						" smart indent
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" plain text editing
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+autocmd FileType text setlocal \
+	textwidth=64 \
+	shiftwidth=0 \
+	formatoptions=cqtan2 \
+	breakindent
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
