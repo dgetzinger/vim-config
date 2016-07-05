@@ -1,29 +1,36 @@
 "==============================================================================
-"  vimrc_common.vim
-"  Sourced by .vimrc or _vimrc. Copy to $HOME.
-"  Last rev 2015-10-26
+"  .vimrc_common.vim
+"  Sourced by .vimrc. Copy to $HOME.
+"  Last rev 2016-07-05
 "==============================================================================
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " gui settings
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if has('gui_running')
-    if has('gui_win32')
-        set guifont=Inconsolata:h12:cANSI
+
+	" All good console fonts, system should have at least one
+	set guifont=Consolas:h11:cANSI
+	set guifont=Inconsolata:h12:cANSI
+	set guifont=Cousine:h11:cANSI
+	set guifont=Hack:h11:cANSI
+	set guifont=Akkurat_Mono_Pro:h10:cANSI
+
+	set guioptions-=T			" drop the toolbar
+    if has('gui_win32')			" maximize window on open
         au GUIEnter * simalt ~x
     endif
 endif
 
-
-" set colors
 set t_Co=256					" 256-color terminal
 colorscheme author
 syntax on						" auto syntax highlighting
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " general behavior
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set nocompatible				" allow various non-vi options
 "set hidden						" hide buffer when abandoned
 set clipboard=unnamed			" use register * for clipboard
@@ -33,9 +40,9 @@ set fileformats=unix,dos		" read/write in this format
 set encoding=utf-8
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " filetypes and syntax
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 filetype on						" enable auto filetype detection
 filetype plugin on				" load plugins for specific file types
 autocmd BufRead,BufNewFile *	" default to text file if no type specified
@@ -46,16 +53,26 @@ set formatoptions+=croq			" :help 'fo-table' for list
 set formatoptions-=t			" no textwrapping
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Status line (:help statusline for options)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set statusline=%-t\ %m\ [BUF=%n]\ [OFFSET=%o]\ [LINE=%-l\/%L]\ [COL=%v]\ [ASCII=%03.3b/HEX=%03.3B]
 set laststatus=2				" always show status line
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" editing
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" search options
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set incsearch					" highlight next search term
+set hlsearch					" underline all search terms
+set ignorecase					" generally ignore case when searching
+set smartcase					" ... except when capitals typed
+set wrapscan					" searches wrap around end of buffer
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" general editing
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set number						" auto line numbering
 set showmode					" show current editing mode
 set showcmd						" show partial commands
@@ -77,19 +94,9 @@ set shiftwidth=4				" # of spaces to use for each (auto)indent
 set cindent						" smart indent
 
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" search options
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set incsearch					" highlight next search term
-set hlsearch					" underline all search terms
-set ignorecase					" generally ignore case when searching
-set smartcase					" ... except when capitals typed
-set wrapscan					" searches wrap around end of buffer
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " mappings (:help map-special-keys for options)
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " <C-Right> and <C-Left>: cycle forward (back) through open buffers
 map <C-Right> :bn<CR>
 map <C-Left> :bp<CR>
