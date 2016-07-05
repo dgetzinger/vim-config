@@ -64,11 +64,17 @@ set laststatus=2				" always show status line
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " search options
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-set incsearch					" highlight next search term
-set hlsearch					" underline all search terms
+set incsearch					" highlight next search term instance
+set hlsearch					" underline all instances of last search
 set ignorecase					" generally ignore case when searching
 set smartcase					" ... except when capitals typed
 set wrapscan					" searches wrap around end of buffer
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" default format options
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set formatoptions=croq			" :help 'fo-table' for list
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
