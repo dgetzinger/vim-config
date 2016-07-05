@@ -23,6 +23,10 @@ if has('gui_running')
     endif
 endif
 
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" Set colors. Save relevant colorscheme to $VIMFILES/colors.
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set t_Co=256					" 256-color terminal
 colorscheme author
 syntax on						" auto syntax highlighting
@@ -33,7 +37,7 @@ syntax on						" auto syntax highlighting
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set nocompatible				" allow various non-vi options
 "set hidden						" hide buffer when abandoned
-set clipboard=unnamed			" use register * for clipboard
+set clipboard=unnamed			" use register * for system clipboard
 set autowrite					" autosave before switching buffers
 set exrc						" read exrc/vimrc from local dirs
 set fileformats=unix,dos		" read/write in this format
@@ -45,12 +49,9 @@ set encoding=utf-8
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 filetype on						" enable auto filetype detection
 filetype plugin on				" load plugins for specific file types
-autocmd BufRead,BufNewFile *	" default to text file if no type specified
-	\ if &filetype == ' '
-	\	setlocal filetype=text
-	\ endif
-set formatoptions+=croq			" :help 'fo-table' for list
-set formatoptions-=t			" no textwrapping
+filetype plugin indent on		" filetype-specific indentation
+autocmd BufNewFile,BufRead *.txt,*.md,*.mmd set filetype=text
+autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
