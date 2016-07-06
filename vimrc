@@ -1,7 +1,6 @@
 "==============================================================================
-"  .vimrc_common.vim
-"  Sourced by .vimrc. Copy to $HOME.
-"  Last rev 2016-07-05
+"  .vimrc
+"  Last rev 2016-07-06
 "==============================================================================
 
 
@@ -36,7 +35,8 @@ syntax on						" auto syntax highlighting
 " general behavior
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set nocompatible				" allow various non-vi options
-"set hidden						" hide buffer when abandoned
+set modelines=0					" plug security hole (per Steve Losh)
+set hidden						" hide buffer when abandoned
 set clipboard=unnamed			" use register * for system clipboard
 set autowrite					" autosave before switching buffers
 set exrc						" read exrc/vimrc from local dirs
@@ -94,9 +94,6 @@ set matchpairs=(:),{:},[:],<:>	" pairs for showmatch option
 set scrolloff=3					" minimum context at top/bottom of screen
 set nostartofline				" keep cursor in same col after jumps
 
-" \zz toggles typewriter scrolling on/off
-:nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
-
 " formatting and indentation
 set textwidth=0					" prevent wrapping
 set tabstop=4					" # of spaces <Tab> appears as
@@ -111,8 +108,14 @@ set breakindent
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " global mappings (:help map-special-keys for options)
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+let mapleader = "\\"
+let maplocalleader = ","
+
 
 """" NORMAL MODE """"
+
+" \zz toggles typewriter scrolling on/off
+:nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 
 " <M-j> and <M-k>: move down (up) one screen (cf. logical) line
 nnoremap <M-j> gj
@@ -147,9 +150,6 @@ augroup text_settings
 	" general formatting
 	autocmd FileType text,markdown setl textwidth=64 shiftwidth=0 formatoptions=cqta2
 
-	" text file-specific mappings
-	let maplocalleader = ","
-
 	" g( and g) jump to first (last) character in sentence
 	" g{ and g} jump to first (last) character in paragraph
 	autocmd FileType text,markdown nnoremap <buffer> g( vis`<
@@ -168,8 +168,6 @@ augroup END
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 augroup vim_settings
 	autocmd!
-	let maplocalleader = ","
-
 	" ,c comment out a line
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
