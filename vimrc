@@ -99,28 +99,42 @@ set shiftwidth=4				" # of spaces to use for each (auto)indent
 set linebreak					" wrap lines at 'breakat' chars
 set breakat=\ \	!@*-+;:,./?		" break line after <SP> <TAB> etc.
 set showbreak+=\\				" preceed continued lines with \
+set breakindent
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" global mappings (:help map-special-keys for options)
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+"""" NORMAL MODE """"
+
+" <M-j> and <M-k>: move down (up) one screen (cf. logical) line
+nnoremap <M-j> gj
+nnoremap <M-k> gk
+
+" <C-Right> and <C-Left>: cycle forward (back) through open buffers
+nnoremap <C-Right> :bn<CR>
+nnoremap <C-Left> :bp<CR>
+
+" <C-Down> and <C-Up>: cycle down (up) through open windows
+nnoremap <C-Down> j 
+nnoremap <C-Up> k
+
+
+"""" INSERT MODE """"
+
+" jk exit insert mode (as do <Esc>, <C-[>, and <C-c>). Thanks Steve Losh!
+inoremap jk <Esc>
+
+" <M-x> forward-delete one character, <M-d> one Word
+inoremap <C-d> <Del>
+inoremap <M-d> <C-o>dE
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " plain text editing
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 autocmd FileType text,markdown setlocal textwidth=64 shiftwidth=0 formatoptions=cqtan2 breakindent
-
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" mappings (:help map-special-keys for options)
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" <C-Right> and <C-Left>: cycle forward (back) through open buffers
-map <C-Right> :bn<CR>
-map <C-Left> :bp<CR>
-
-" <C-Down> and <C-Up>: cycle down (up) through open windows
-map <C-Down> j 
-map <C-Up> k
-
-" <M-j> and <M-k>: move down (up) one screen (cf. logical) line
-map j gj
-map k gk
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
