@@ -128,6 +128,7 @@ inoremap jk <Esc>
 
 " <M-x> forward-delete one character, <M-d> one Word
 inoremap <C-d> <Del>
+" TODO: why doesn't this work on Mac?
 inoremap <M-d> <C-o>dE
 
 
@@ -153,5 +154,18 @@ augroup text_settings
 	" ,O and ,o open new paragraph two lines above, below current one
 	autocmd FileType text,markdown nnoremap <buffer> <localleader>O vip`<OO
 	autocmd FileType text,markdown nnoremap <buffer> <localleader>o vip`>oo
+augroup END
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" vimfile editing
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+augroup vim_settings
+	autocmd!
+	let maplocalleader = ","
+
+	" ,c comment out a line
+	" TODO: why doesn't this work on Mac?
+	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
 
