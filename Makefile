@@ -12,7 +12,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Filenames omit '.' prefix, which will be added when copied to
 # install directory.
-src_files		:= vimrc vimrc_common.vim
+src_files		:= vimrc
 scriptdir		:= 
 script_files	:= $(notdir $(wildcard $(scriptdir)/*.sh))
 
