@@ -64,7 +64,8 @@ set formatoptions=croq			" :help 'fo-table' for list
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Status line (:help statusline for options)
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-set statusline=%-t\ %m\ [b%n]\ [ft=%{&ft}]\ [fo=%{&fo}]\ [line=%-l\/%L]\ [col=%v]\ [ASCII=%03.3b/HEX=%03.3B]
+"set statusline=%-t\ %m\ [b%n]\ [ft=%{&ft}]\ [fo=%{&fo}]\ [line=%-l\/%L]\ [col=%v]\ [ASCII=%03.3b/HEX=%03.3B]
+set statusline=b%n:%-f\ %{&ft}\ +%{&fo}\ line=%l\/%L\ col=%v/%{&tw}\ U+%04.4B
 set laststatus=2				" always show status line
 
 
