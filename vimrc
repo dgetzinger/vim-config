@@ -134,17 +134,24 @@ inoremap <M-d> <C-o>dE
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " plain text editing
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-autocmd FileType text,markdown setlocal textwidth=64 shiftwidth=0 formatoptions=cqtan2 breakindent
+augroup text_settings
+	autocmd!
 
+	" general formatting
+	autocmd FileType text,markdown setl textwidth=64 shiftwidth=0 formatoptions=cqta2
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" abbreviations
-" ^V in insert mode to quote special keys
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-iabbrev #d #define
-iabbrev #i #include
-iabbrev #-- 0C#-------------------------------------------------------------------------------
-iabbrev #== 0C#===============================================================================
-iabbrev /** 0C/*******************************************************************************
-iabbrev **/ 0C ******************************************************************************/
+	" text file-specific mappings
+	let maplocalleader = ","
+
+	" g( and g) jump to first (last) character in sentence
+	" g{ and g} jump to first (last) character in paragraph
+	autocmd FileType text,markdown nnoremap <buffer> g( vis`<
+	autocmd FileType text,markdown nnoremap <buffer> g) vis`>
+	autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
+	autocmd FileType text,markdown nnoremap <buffer> g} vip`>
+
+	" ,O and ,o open new paragraph two lines above, below current one
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>O vip`<OO
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>o vip`>oo
+augroup END
 
