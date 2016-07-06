@@ -89,7 +89,13 @@ set backspace=eol,start,indent	" allow backspace to delete everything
 set report=0					" report number of lines changed
 set showmatch					" briefly jump to matching paren
 set matchpairs=(:),{:},[:],<:>	" pairs for showmatch option
+
+" scrolling and cursor movement
+set scrolloff=3					" minimum context at top/bottom of screen
 set nostartofline				" keep cursor in same col after jumps
+
+" \zz toggles typewriter scrolling on/off
+:nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 
 " formatting and indentation
 set textwidth=0					" prevent wrapping
@@ -165,7 +171,6 @@ augroup vim_settings
 	let maplocalleader = ","
 
 	" ,c comment out a line
-	" TODO: why doesn't this work on Mac?
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
 
