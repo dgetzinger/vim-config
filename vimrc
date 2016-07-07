@@ -111,9 +111,10 @@ set matchpairs=(:),{:},[:],<:>	" pairs for showmatch option
 set scrolloff=3					" minimum context at top/bottom of screen
 set nostartofline				" keep cursor in same col after jumps
 
-" formatting and indentation
+" textwidth, indentation, line breaks
 set textwidth=0					" prevent wrapping
-set tabstop=4					" # of spaces <Tab> appears as
+set tabstop=4					" # of spaces <Tab> counts for
+set softtabstop=4				" # of spaces <Tab> appears to count for
 set noexpandtab					" do not expand <Tab> to spaces
 set shiftwidth=4				" # of spaces to use for each (auto)indent
 set linebreak					" wrap lines at 'breakat' chars
@@ -158,24 +159,102 @@ inoremap <C-f> <C-o>dE
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" global mappings (:help map-special-keys for options)
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+let mapleader = "\\"			" single backslash
+let maplocalleader = ","		" comma
+
+
+"~~~~~~~~~~~~
+" Consider remapping CAPS LOCK key to CTRL
+"   Windows:  SharpKeys (http://http://sharpkeys.codeplex.com/
+"   OSX:  System Preferences > Keyboard > Modifier Keys
+"~~~~~~~~~~~~
+
+
+"""" NORMAL MODE MAPPINGS """"
+
+" \zz toggles typewriter scrolling on/off
+nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
+
+" <C-Right> and <C-Left>: cycle forward (back) through open buffers
+" Shadowed by system command on OSX
+nnoremap <C-Right> :bn<CR>
+nnoremap <C-Left> :bp<CR>
+
+" Open new vertical split with ,vs - focus shifts to new window
+nnoremap <localleader>vs <C-w>v<C-w>l
+
+" Quicker movements around splits using hjkl keys
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+
+"""" NORMAL/VISUAL/SELECT MODE ONLY MAPPINGS """"
+
+" jk^$ operate on screen lines, not logical lines, unless prefixed with g
+noremap j gj
+noremap k gk
+noremap gj j
+noremap gk k
+noremap ^ g^
+noremap $ g$
+noremap g^ ^
+noremap g$ $
+
+
+"""" INSERT/COMMAND MODE ONLY MAPPINGS """"
+
+" ,, exit insert mode (as do <Esc>, <C-[>, and <C-c>)
+noremap! <localleader><localleader> <Esc>
+
+" <C-d> delete-forward one character, <C-f> one Word
+noremap! <C-d> <Del>
+noremap! <C-f> <C-o>dE
+
+
+"""" VISUAL/OPERATOR-PENDING MODE MAPPINGS """"
+
+" ,, exit visual mode (as do <Esc>, <C-[>, and <C-c>)
+vnoremap <localleader><localleader> <Esc>
+onoremap <localleader><localleader> <Esc>
+
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " plain text editing
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 augroup text_settings
-autocmd!
+	autocmd!
 
-" general formatting
-autocmd FileType text,markdown setl textwidth=64 shiftwidth=0 formatoptions=cqta2
+	" general formatting
+	autocmd FileType text,markdown setl textwidth=64 shiftwidth=5 formatoptions=tamB1
 
-" g( and g) jump to first (last) character in sentence
-" g{ and g} jump to first (last) character in paragraph
-autocmd FileType text,markdown nnoremap <buffer> g( vis`<
-autocmd FileType text,markdown nnoremap <buffer> g) vis`>
-autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
-autocmd FileType text,markdown nnoremap <buffer> g} vip`>
+	" g( and g) jump to first (last) character in sentence
+	" g{ and g} jump to first (last) character in paragraph
+	autocmd FileType text,markdown nnoremap <buffer> g( vis`<
+	autocmd FileType text,markdown nnoremap <buffer> g) vis`>
+	autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
+	autocmd FileType text,markdown nnoremap <buffer> g} vip`>
 
-" ,O and ,o open new paragraph two lines above, below current one
-autocmd FileType text,markdown nnoremap <buffer> <localleader>O vip`<OO
-autocmd FileType text,markdown nnoremap <buffer> <localleader>o vip`>oo
+	" ,w, ,s and ,p select current word, sentence, paragraph
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>w viw
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>s vis
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>p vip
+
+	" , plus '"*_ enclose visual selection in respective punctuation
+	" ... or you could just use the surround plugin ...
+	autocmd FileType text,markdown noremap <buffer> <localleader>' c'+'l
+	autocmd FileType text,markdown noremap <buffer> <localleader>" c"+"l
+	autocmd FileType text,markdown noremap <buffer> <localleader>* c*+*l
+	autocmd FileType text,markdown noremap <buffer> <localleader>** c**+**l
+	autocmd FileType text,markdown noremap <buffer> <localleader>_ c_+_l
+	autocmd FileType text,markdown noremap <buffer> <localleader>__ c__+__l
+
+	" ,O and ,o open new paragraph two lines above, below current one
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>O vip`<OO
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>o vip`>oo
 augroup END
 
 
@@ -183,8 +262,9 @@ augroup END
 " vimfile editing
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 augroup vim_settings
-autocmd!
-" ,c comment out a line
-autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
+	autocmd!
+	autocmd FileType vim setl formatoptions=croq
+	" ,c comment out a line
+	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
 
