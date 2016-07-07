@@ -9,16 +9,27 @@
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 if has('gui_running')
 
-	" All good console fonts, system should have at least one
-	set guifont=Consolas:h11:cANSI
-	set guifont=Inconsolata:h12:cANSI
-	set guifont=Cousine:h11:cANSI
-	set guifont=Hack:h11:cANSI
-	set guifont=Akkurat_Mono_Pro:h10:cANSI
+	" All excellent free or open console fonts
+	"set guifont=Consolas:h11:cANSI
+	"set guifont=Cousine:h11:cANSI
+	"set guifont=Fantasque_Sans_Mono:h11:cANSI
+	"set guifont=Hack:h11:cANSI
+	"set guifont=Inconsolata:h12:cANSI
+	"set guifont=InputMonoNarrow:h11:cANSI
+	"set guifont=Liberation_Mono:h10:cANSI
+	"set guifont=Source_Code_Pro:h11:cANSI
 
 	set guioptions-=T			" drop the toolbar
+
     if has('gui_win32')			" maximize window on open
+		set guifont=Inconsolata:h12:cANSI
         au GUIEnter * simalt ~x
+    endif
+
+    if has('gui_macvim')
+		set guifont=Hack:h13
+		set lines=64
+		set columns=120
     endif
 endif
 
@@ -108,14 +119,14 @@ set breakindent
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " global mappings (:help map-special-keys for options)
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let mapleader = "\\"
-let maplocalleader = ","
+let mapleader = "\\"			" single backslash
+let maplocalleader = ","		" comma
 
 
-"""" NORMAL MODE """"
+"""" NORMAL MODE ONLY """"
 
 " \zz toggles typewriter scrolling on/off
-:nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
+nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 
 " <M-j> and <M-k>: move down (up) one screen (cf. logical) line
 nnoremap <M-j> gj
@@ -130,36 +141,35 @@ nnoremap <C-Down> j
 nnoremap <C-Up> k
 
 
-"""" INSERT MODE """"
+"""" INSERT MODE ONLY """"
 
 " jk exit insert mode (as do <Esc>, <C-[>, and <C-c>). Thanks Steve Losh!
 inoremap jk <Esc>
 
-" <M-x> forward-delete one character, <M-d> one Word
+" <C-d> delete-forward one character, <C-f> one Word
 inoremap <C-d> <Del>
-" TODO: why doesn't this work on Mac?
-inoremap <M-d> <C-o>dE
+inoremap <C-f> <C-o>dE
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " plain text editing
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 augroup text_settings
-	autocmd!
+autocmd!
 
-	" general formatting
-	autocmd FileType text,markdown setl textwidth=64 shiftwidth=0 formatoptions=cqta2
+" general formatting
+autocmd FileType text,markdown setl textwidth=64 shiftwidth=0 formatoptions=cqta2
 
-	" g( and g) jump to first (last) character in sentence
-	" g{ and g} jump to first (last) character in paragraph
-	autocmd FileType text,markdown nnoremap <buffer> g( vis`<
-	autocmd FileType text,markdown nnoremap <buffer> g) vis`>
-	autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
-	autocmd FileType text,markdown nnoremap <buffer> g} vip`>
+" g( and g) jump to first (last) character in sentence
+" g{ and g} jump to first (last) character in paragraph
+autocmd FileType text,markdown nnoremap <buffer> g( vis`<
+autocmd FileType text,markdown nnoremap <buffer> g) vis`>
+autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
+autocmd FileType text,markdown nnoremap <buffer> g} vip`>
 
-	" ,O and ,o open new paragraph two lines above, below current one
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>O vip`<OO
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>o vip`>oo
+" ,O and ,o open new paragraph two lines above, below current one
+autocmd FileType text,markdown nnoremap <buffer> <localleader>O vip`<OO
+autocmd FileType text,markdown nnoremap <buffer> <localleader>o vip`>oo
 augroup END
 
 
@@ -167,8 +177,8 @@ augroup END
 " vimfile editing
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 augroup vim_settings
-	autocmd!
-	" ,c comment out a line
-	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
+autocmd!
+" ,c comment out a line
+autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
 
