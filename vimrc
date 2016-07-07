@@ -15,7 +15,8 @@ if has('gui_running')
 	"set guifont=Fantasque_Sans_Mono:h11:cANSI
 	"set guifont=Hack:h11:cANSI
 	"set guifont=Inconsolata:h12:cANSI
-	"set guifont=InputMonoNarrow:h11:cANSI
+	"set guifont=InputMono:h11:cANSI
+	"set guifont=Menlo:h11:cANSI
 	"set guifont=Liberation_Mono:h10:cANSI
 	"set guifont=Source_Code_Pro:h11:cANSI
 
@@ -29,7 +30,7 @@ if has('gui_running')
     if has('gui_macvim')
 		set guifont=Hack:h13
 		set lines=64
-		set columns=120
+		set columns=180
     endif
 endif
 
@@ -182,8 +183,8 @@ nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 nnoremap <C-Right> :bn<CR>
 nnoremap <C-Left> :bp<CR>
 
-" Open new vertical split with ,vs - focus shifts to new window
-nnoremap <localleader>vs <C-w>v<C-w>l
+" Open new vertical split with ,sp - focus shifts to new window
+nnoremap <localleader>sp <C-w>v<C-w>l
 
 " Quicker movements around splits using hjkl keys
 nnoremap <C-h> <C-w>h
@@ -207,19 +208,12 @@ noremap g$ $
 
 """" INSERT/COMMAND MODE ONLY MAPPINGS """"
 
-" ,, exit insert mode (as do <Esc>, <C-[>, and <C-c>)
-noremap! <localleader><localleader> <Esc>
+" ;; exit insert mode (as do <Esc>, <C-[>, and <C-c>)
+noremap! ;; <Esc>
 
 " <C-d> delete-forward one character, <C-f> one Word
 noremap! <C-d> <Del>
 noremap! <C-f> <C-o>dE
-
-
-"""" VISUAL/OPERATOR-PENDING MODE MAPPINGS """"
-
-" ,, exit visual mode (as do <Esc>, <C-[>, and <C-c>)
-vnoremap <localleader><localleader> <Esc>
-onoremap <localleader><localleader> <Esc>
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -243,14 +237,13 @@ augroup text_settings
 	autocmd FileType text,markdown nnoremap <buffer> <localleader>s vis
 	autocmd FileType text,markdown nnoremap <buffer> <localleader>p vip
 
-	" , plus '"*_ enclose visual selection in respective punctuation
-	" ... or you could just use the surround plugin ...
-	autocmd FileType text,markdown noremap <buffer> <localleader>' c'+'l
-	autocmd FileType text,markdown noremap <buffer> <localleader>" c"+"l
-	autocmd FileType text,markdown noremap <buffer> <localleader>* c*+*l
-	autocmd FileType text,markdown noremap <buffer> <localleader>** c**+**l
-	autocmd FileType text,markdown noremap <buffer> <localleader>_ c_+_l
-	autocmd FileType text,markdown noremap <buffer> <localleader>__ c__+__l
+	" ' and " enclose visual selection in respective quotes
+	autocmd FileType text,markdown vnoremap <buffer> ' c'+'
+	autocmd FileType text,markdown vnoremap <buffer> " c"+"
+	
+	" <C-b> for bold, <C-i> for italics
+	autocmd FileType text,markdown vnoremap <buffer> <C-i> c*+*
+	autocmd FileType text,markdown vnoremap <buffer> <C-b> c__+__
 
 	" ,O and ,o open new paragraph two lines above, below current one
 	autocmd FileType text,markdown nnoremap <buffer> <localleader>O vip`<OO
