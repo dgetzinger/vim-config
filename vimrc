@@ -83,11 +83,17 @@ set laststatus=2				" always show status line
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " search options
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+set ignorecase					" generally ignore case when searching
 set incsearch					" highlight next search term instance
 set hlsearch					" underline all instances of last search
-set ignorecase					" generally ignore case when searching
 set smartcase					" ... except when capitals typed
 set wrapscan					" searches wrap around end of buffer
+set gdefault					" apply substitutions globally by default
+
+" 'very magic' mode - enable more POSIX-like regex parsing (not portable)
+" normal, visual and operator-pending modes only - / is used a lot in command mode
+noremap / /\v
+noremap ? ?\v
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
