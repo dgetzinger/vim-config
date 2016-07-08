@@ -1,6 +1,6 @@
 "==============================================================================
 "  .vimrc
-"  Last rev 2016-07-06
+"  Last rev 2016-07-08
 "==============================================================================
 
 
@@ -261,3 +261,19 @@ augroup vim_settings
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
 
+
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" vim theme editing tools
+" credit http://vimcasts.org/episodes/creating-colorschemes-for-vim/
+" Useful plugins:
+"	 HiLinkTrace:
+"	 HexHighlight: toggle #rrggbb values<->colors with <leader><F2>
+"	 GuiColorScheme:  convert guifg, guibg colors into cterm equivalents
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" Prints name of highlight group - invoke with <C-S-p>
+nmap <C-S-p> :call <SID>SynStack()<CR>
+function! <SID>SynStack()
+  if exists("*synstack")
+	  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+  endif
+endfunc
