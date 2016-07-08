@@ -16,7 +16,7 @@ if has('gui_running')
 	"set guifont=Hack:h11:cANSI
 	"set guifont=Inconsolata:h12:cANSI
 	"set guifont=InputMono:h11:cANSI
-	"set guifont=Menlo:h11:cANSI
+	"set guifont=Menlo:h11:cANSI	(Apple font; Mac only)
 	"set guifont=Liberation_Mono:h10:cANSI
 	"set guifont=Source_Code_Pro:h11:cANSI
 
@@ -103,6 +103,7 @@ noremap ? ?\v
 set number						" auto line numbering
 set showmode					" show current editing mode
 set showcmd						" show partial commands
+set cursorline					" highlight cursor line
 set backspace=eol,start,indent	" allow backspace to delete everything
 set report=0					" report number of lines changed
 set showmatch					" briefly jump to matching paren
@@ -127,43 +128,8 @@ set breakindent
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " global mappings (:help map-special-keys for options)
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let mapleader = "\\"			" single backslash
-let maplocalleader = ","		" comma
-
-
-"""" NORMAL MODE ONLY """"
-
-" \zz toggles typewriter scrolling on/off
-nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
-
-" <M-j> and <M-k>: move down (up) one screen (cf. logical) line
-nnoremap <M-j> gj
-nnoremap <M-k> gk
-
-" <C-Right> and <C-Left>: cycle forward (back) through open buffers
-nnoremap <C-Right> :bn<CR>
-nnoremap <C-Left> :bp<CR>
-
-" <C-Down> and <C-Up>: cycle down (up) through open windows
-nnoremap <C-Down> j 
-nnoremap <C-Up> k
-
-
-"""" INSERT MODE ONLY """"
-
-" jk exit insert mode (as do <Esc>, <C-[>, and <C-c>). Thanks Steve Losh!
-inoremap jk <Esc>
-
-" <C-d> delete-forward one character, <C-f> one Word
-inoremap <C-d> <Del>
-inoremap <C-f> <C-o>dE
-
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" global mappings (:help map-special-keys for options)
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let mapleader = "\\"			" single backslash
-let maplocalleader = ","		" comma
+let mapleader = "\<Space>"		" space bar (u2423: ␣)
+let maplocalleader = "\\"		" single backslash
 
 
 "~~~~~~~~~~~~
@@ -175,22 +141,25 @@ let maplocalleader = ","		" comma
 
 """" NORMAL MODE MAPPINGS """"
 
-" \zz toggles typewriter scrolling on/off
+" ␣zz toggles typewriter scrolling on/off
 nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
+
+" #<CR> jump straight to line #
+nnoremap <CR> G
+nnoremap <BS> gg
+
+" Open new vertical split with ,sp - focus shifts to new window
+" Quicker movements around splits using hjkl keys
+nnoremap <Leader>sp <C-w>v<C-w>l
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 " <C-Right> and <C-Left>: cycle forward (back) through open buffers
 " Shadowed by system command on OSX
 nnoremap <C-Right> :bn<CR>
 nnoremap <C-Left> :bp<CR>
-
-" Open new vertical split with ,sp - focus shifts to new window
-nnoremap <localleader>sp <C-w>v<C-w>l
-
-" Quicker movements around splits using hjkl keys
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
 
 
 """" NORMAL/VISUAL/SELECT MODE ONLY MAPPINGS """"
