@@ -174,6 +174,10 @@ noremap $ g$
 noremap g^ ^
 noremap g$ $
 
+" leave cursor at end of selection following yank or paste - allows pppp ...
+noremap y y`]
+noremap p p`]
+
 
 """" INSERT/COMMAND MODE ONLY MAPPINGS """"
 
@@ -201,22 +205,22 @@ augroup text_settings
 	autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
 	autocmd FileType text,markdown nnoremap <buffer> g} vip`>
 
-	" ,w, ,s and ,p select current word, sentence, paragraph
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>w viw
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>s vis
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>p vip
+	" ␣w, ␣( and ␣{ select inside current word, sentence, paragraph
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>w viw
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>( vis
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>{ vip
 
-	" ' and " enclose visual selection in respective quotes
+	" Visual selection: ' and " enclose in respective quotes
 	autocmd FileType text,markdown vnoremap <buffer> ' c'+'
 	autocmd FileType text,markdown vnoremap <buffer> " c"+"
 	
-	" <C-b> for bold, <C-i> for italics
+	" Visual selection: <C-b> for bold, <C-i> for italics
 	autocmd FileType text,markdown vnoremap <buffer> <C-i> c*+*
 	autocmd FileType text,markdown vnoremap <buffer> <C-b> c__+__
 
-	" ,O and ,o open new paragraph two lines above, below current one
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>O vip`<OO
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>o vip`>oo
+	" ␣O and ␣o open new paragraph two lines above, below current one
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>O vip`<OO
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>o vip`>oo
 augroup END
 
 
