@@ -1,6 +1,7 @@
 "==============================================================================
+"
 "  .vimrc
-"  Last rev 2016-07-08
+"
 "==============================================================================
 
 
@@ -35,17 +36,13 @@ if has('gui_running')
 endif
 
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Set colors. Save relevant colorscheme to $VIMFILES/colors.
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set t_Co=256					" 256-color terminal
 colorscheme author
 syntax on						" auto syntax highlighting
 
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " general behavior
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set nocompatible				" allow various non-vi options
 set modelines=0					" plug security hole (per Steve Losh)
 set hidden						" hide buffer when abandoned
@@ -56,9 +53,7 @@ set fileformats=unix,dos		" read/write in this format
 set encoding=utf-8
 
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " filetypes and syntax
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 filetype on						" enable auto filetype detection
 filetype plugin on				" load plugins for specific file types
 filetype plugin indent on		" filetype-specific indentation
@@ -67,23 +62,17 @@ autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
 autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
 
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " default format options
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set formatoptions=croq			" :help 'fo-table' for list
 
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " Status line (:help statusline for options)
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "set statusline=%-t\ %m\ [b%n]\ [ft=%{&ft}]\ [fo=%{&fo}]\ [line=%-l\/%L]\ [col=%v]\ [ASCII=%03.3b/HEX=%03.3B]
 set statusline=b%n:%-f\ %{&ft}\ +%{&fo}\ line=%l\/%L\ col=%v/%{&tw}\ U+%04.4B
 set laststatus=2				" always show status line
 
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " search options
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set ignorecase					" generally ignore case when searching
 set incsearch					" highlight next search term instance
 set hlsearch					" underline all instances of last search
@@ -97,9 +86,7 @@ noremap / /\v
 noremap ? ?\v
 
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 " general editing
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 set number						" auto line numbering
 set showmode					" show current editing mode
 set showcmd						" show partial commands
@@ -126,17 +113,18 @@ set breakindent
 
 
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" global mappings (:help map-special-keys for options)
+" mappings (:help map-special-keys for options)
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let mapleader = "\<Space>"		" space bar (u2423: ␣)
-let maplocalleader = "\\"		" single backslash
+let mapleader = "\<Space>"
+let maplocalleader = "\<Bslash>"
+set timeoutlen=700				" ms to wait before acting on ambiguous map
 
 
-"~~~~~~~~~~~~
+"--------------------------------------------------------------
 " Consider remapping CAPS LOCK key to CTRL
-"   Windows:  SharpKeys (http://http://sharpkeys.codeplex.com/
+"   Windows:  SharpKeys http://http://sharpkeys.codeplex.com/
 "   OSX:  System Preferences > Keyboard > Modifier Keys
-"~~~~~~~~~~~~
+"--------------------------------------------------------------
 
 
 """" NORMAL MODE MAPPINGS """"
@@ -147,6 +135,14 @@ nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 " #<CR> jump straight to line #
 nnoremap <CR> G
 nnoremap <BS> gg
+
+" Select word, Word under cursor
+nnoremap <Leader>w viw
+nnoremap <Leader>W viW
+
+" <F2> quick file save
+" <F3> (in vim section below) quick source (vim files only)
+nnoremap <F2> :write<CR>
 
 " Open new vertical split with ,sp - focus shifts to new window
 " Quicker movements around splits using hjkl keys
@@ -211,12 +207,12 @@ augroup text_settings
 	autocmd FileType text,markdown nnoremap <buffer> <Leader>{ vip
 
 	" Visual selection: ' and " enclose in respective quotes
-	autocmd FileType text,markdown vnoremap <buffer> ' c'+'
-	autocmd FileType text,markdown vnoremap <buffer> " c"+"
+	autocmd FileType text,markdown xnoremap <buffer> ' c'+'
+	autocmd FileType text,markdown xnoremap <buffer> " c"+"
 	
 	" Visual selection: <C-b> for bold, <C-i> for italics
-	autocmd FileType text,markdown vnoremap <buffer> <C-i> c*+*
-	autocmd FileType text,markdown vnoremap <buffer> <C-b> c__+__
+	autocmd FileType text,markdown xnoremap <buffer> <C-i> c*+*
+	autocmd FileType text,markdown xnoremap <buffer> <C-b> c__+__
 
 	" ␣O and ␣o open new paragraph two lines above, below current one
 	autocmd FileType text,markdown nnoremap <buffer> <Leader>O vip`<OO
@@ -230,7 +226,11 @@ augroup END
 augroup vim_settings
 	autocmd!
 	autocmd FileType vim setl formatoptions=croq
-	" ,c comment out a line
+
+	" <F3> write and source current file
+	autocmd FileType vim nnoremap <buffer> <F3> :source %<CR>
+
+	" comment out a line
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
 
