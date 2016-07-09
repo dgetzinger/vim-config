@@ -1,3 +1,5 @@
+#######################################################################
+#
 # Makefile
 #
 # Copies specified vim configuration files from development directory
@@ -5,26 +7,32 @@
 #
 # vim root defaults to $HOME; execute 'make INSTALL_DIR=/blah' for
 # different destination.
+#
+#######################################################################
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Variables
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Filenames omit '.' prefix, which will be added when copied to
-# install directory.
-src_files		:= vimrc
-scriptdir		:= 
-script_files	:= $(notdir $(wildcard $(scriptdir)/*.sh))
+# rc files and directories in git repository omit . prefix for ease of editing.
+# Dot prefixed when copied to INSTALL_DIR
+src_rcfiles		:= vimrc
+src_rcdir		:= vim
 
-# Target directories.
+# User-settable variables
 INSTALL_DIR		?= $(HOME)
-scriptdotdir	:= $(INSTALL_DIR)/$(addprefix .,$(scriptdir))
-alldirs			:= $(INSTALL_DIR) $(scriptdotdir)
+RC_PREFIX		?= .
+
+# Destination directories
+tgt_rcdir		:= $(addprefix $(INSTALL_DIR)/,$(addprefix $(RC_PREFIX),$(src_rcdir)))
+tgt_alldirs		:= $(INSTALL_DIR) $(tgt_rcdir)
 
 # Target files. Adds '.' before file names.
-dotfiles		:= $(addprefix $(INSTALL_DIR)/,$(addprefix .,$(src_files)))
-scripts			:= $(addprefix $(scriptdotdir)/,$(script_files))
-allfiles		:= $(dotfiles) $(scripts)
+tgt_rcfiles		:= $(addprefix $(INSTALL_DIR)/$(RC_PREFIX),$(src_rcfiles))
+tgt_allfiles	:= $(tgt_rcfiles)
+
+# Order matters here
+tgt_all			:= $(tgt_alldirs) $(tgt_rcfiles) 
 
 # Commands
 BIN				:= /bin
@@ -62,7 +70,7 @@ backup_flags	= --backup=simple --suffix=$(backup_suffix)
 
 # install (default) normally will copy and rename existing files
 # before clobber overwrites the originals
-install: $(alldirs) $(allfiles)
+install: $(tgt_all)
 
 # skip the backup--existing files will be *overwritten*
 clobber nobackup skipbackup: backup_flags = 
@@ -92,13 +100,12 @@ clean:
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Explicit rules.
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Default rule for copying files, including files in subdirectories
-$(INSTALL_DIR)/.%: %
+$(tgt_rcfiles): $(INSTALL_DIR)/$(RC_PREFIX)%: $(CURDIR)/%
 	$(QUIET)$(CP) $(backup_flags) $* $@ 
 
 
 # Create any target directories that do not already exist
-$(alldirs):
+$(tgt_alldirs):
 	$(QUIET)if [ ! -d "$@" ]; then $(MKDIR) "$@"; fi
 
 
@@ -124,5 +131,3 @@ eyes:			; $(QUIET)echo "Got a date tonight yet, sailor?"
 love whoopee:	; $(QUIET)echo "Not until we're married, Buster."
 money:			; $(QUIET)echo "Whaddya got to sell?"
 
-.DEFAULT:
-	$(QUIET)echo "$@: I'm not comfortable with that on the first date."
