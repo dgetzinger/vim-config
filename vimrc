@@ -139,14 +139,20 @@ nnoremap <BS> gg
 " Select word, Word under cursor
 nnoremap <Leader>w viw
 nnoremap <Leader>W viW
+nnoremap <Leader>( vis
+nnoremap <Leader>{ vip
 
 " <F2> quick file save
 " <F3> (in vim section below) quick source (vim files only)
+" <F4> buffer delete; <Leader><F4> quit
 nnoremap <F2> :write<CR>
+nnoremap <F4> :bd<CR>
+nnoremap <Leader><F4> :q<CR>
 
-" Open new vertical split with ,sp - focus shifts to new window
-" Quicker movements around splits using hjkl keys
-nnoremap <Leader>sp <C-w>v<C-w>l
+" ␣| opens new vertical split and moves to it
+nnoremap <Leader><Bar> <C-w>v<C-w>l
+
+" Quicker movements around splits using Ctrl+hjkl keys
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -158,7 +164,7 @@ nnoremap <C-Right> :bn<CR>
 nnoremap <C-Left> :bp<CR>
 
 
-"""" NORMAL/VISUAL/SELECT MODE ONLY MAPPINGS """"
+"""" NORMAL/VISUAL/SELECT MODE MAPPINGS """"
 
 " jk^$ operate on screen lines, not logical lines, unless prefixed with g
 noremap j gj
@@ -170,9 +176,13 @@ noremap $ g$
 noremap g^ ^
 noremap g$ $
 
-" leave cursor at end of selection following yank or paste - allows pppp ...
-noremap y y`]
-noremap p p`]
+noremap P gP
+noremap p gp
+noremap gP P
+noremap gp p
+
+" ␣␣ exits visual mode (;; conflicts with repeat-search cmd)
+xnoremap <Space><Space> <Esc>
 
 
 """" INSERT/COMMAND MODE ONLY MAPPINGS """"
@@ -201,10 +211,10 @@ augroup text_settings
 	autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
 	autocmd FileType text,markdown nnoremap <buffer> g} vip`>
 
+	" leave cursor at end of selection following yank - allows pppp ...
+	autocmd FileType text,markdown noremap y y`]
+
 	" ␣w, ␣( and ␣{ select inside current word, sentence, paragraph
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>w viw
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>( vis
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>{ vip
 
 	" Visual selection: ' and " enclose in respective quotes
 	autocmd FileType text,markdown xnoremap <buffer> ' c'+'
@@ -227,7 +237,7 @@ augroup vim_settings
 	autocmd!
 	autocmd FileType vim setl formatoptions=croq
 
-	" <F3> write and source current file
+	" <F3> quick source current file
 	autocmd FileType vim nnoremap <buffer> <F3> :source %<CR>
 
 	" comment out a line
