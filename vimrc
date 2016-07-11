@@ -12,11 +12,7 @@
 "
 "  License:	
 "
-"  Warranties:	None, not even of merchantability or fitness for any purpose.
-"  				Use at your own risk.
-"
-"  NOTES:	Script loads colorscheme "Belladonna" if it is installed, otherwise
-"  			the colorscheme silently defaults to default scheme.
+"  NOTES:	Script loads colorscheme "belladonna" if it is installed
 "
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -263,6 +259,13 @@ augroup vim_settings
 
 	" comment out a line
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
+augroup END
+"}}}
+
+" Shell script editing ------------------------------------------------------{{{
+augroup sh
+	autocmd!
+	autocmd FileType sh setlocal tabstop=8 shiftwidth=8
 augroup END
 "}}}
 
