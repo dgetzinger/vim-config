@@ -1,13 +1,28 @@
-"==============================================================================
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 "
-"  .vimrc
+"  Name:	.vimrc - personalized vim run control file
 "
-"==============================================================================
+"  Author:	David C. Getzinger <dgetzinger|NOSPAM|777@gmail.com> (delete "|NOSPAM|")
+"
+"  Date:	11 July 2016
+"
+"  Version:	v0.9
+"
+"  Usage:	Copy to $VIMFILES as .vimrc then restart vim
+"
+"  License:	
+"
+"  Warranties:	None, not even of merchantability or fitness for any purpose.
+"  				Use at your own risk.
+"
+"  NOTES:	Script loads colorscheme "Belladonna" if it is installed, otherwise
+"  			the colorscheme silently defaults to default scheme.
+"
+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+setlocal foldmethod=marker
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" gui settings
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" Gui settings -------------------------------------------------------------{{{
 if has('gui_running')
 
 	" All excellent free or open console fonts
@@ -31,18 +46,19 @@ if has('gui_running')
     if has('gui_macvim')
 		set guifont=Hack:h13
 		set lines=64
-		set columns=180
+		set columns=200
     endif
 endif
+"}}}
 
-
-" Set colors. Save relevant colorscheme to $VIMFILES/colors.
+" Colorscheme --------------------------------------------------------------{{{
+" (save colorscheme script to $VIMFILES/colors
 set t_Co=256					" 256-color terminal
-colorscheme author
+silent! colorscheme belladonna	" silently ignore if not found
 syntax on						" auto syntax highlighting
+"}}}
 
-
-" general behavior
+" General behavior ---------------------------------------------------------{{{
 set nocompatible				" allow various non-vi options
 set modelines=0					" plug security hole (per Steve Losh)
 set hidden						" hide buffer when abandoned
@@ -51,28 +67,33 @@ set autowrite					" autosave before switching buffers
 set exrc						" read exrc/vimrc from local dirs
 set fileformats=unix,dos		" read/write in this format
 set encoding=utf-8
+set formatoptions=croq			" :help 'fo-table' for list
+"}}}
 
-
-" filetypes and syntax
+" Filetypes and syntax -----------------------------------------------------{{{
 filetype on						" enable auto filetype detection
 filetype plugin on				" load plugins for specific file types
 filetype plugin indent on		" filetype-specific indentation
 
 autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
 autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
+"}}}
 
-
-" default format options
-set formatoptions=croq			" :help 'fo-table' for list
-
-
-" Status line (:help statusline for options)
-"set statusline=%-t\ %m\ [b%n]\ [ft=%{&ft}]\ [fo=%{&fo}]\ [line=%-l\/%L]\ [col=%v]\ [ASCII=%03.3b/HEX=%03.3B]
-set statusline=b%n:%-f\ %{&ft}\ +%{&fo}\ line=%l\/%L\ col=%v/%{&tw}\ U+%04.4B
+" Status line --------------------------------------------------------------{{{
+" :help 'statusline'
 set laststatus=2				" always show status line
 
+set statusline=b%n:				" buffer number
+set statusline+=%-f				" relative path to current file from PWD
+set statusline+=\ [%{&ft}]		" filetype
+set statusline+=%=				" right-align following
+set statusline+=\ +%{&fo}		" filetype options
+set statusline+=\ line=%l\/%L	" current line/total lines
+set statusline+=\ col=%v/%{&tw}	" current col/textwidth
+set statusline+=\ U+%04.4B		" Unicode BMP value of char under cursor (4 digits)
+"}}}
 
-" search options
+" Search options -----------------------------------------------------------{{{
 set ignorecase					" generally ignore case when searching
 set incsearch					" highlight next search term instance
 set hlsearch					" underline all instances of last search
@@ -84,9 +105,9 @@ set gdefault					" apply substitutions globally by default
 " normal, visual and operator-pending modes only - / is used a lot in command mode
 noremap / /\v
 noremap ? ?\v
+"}}}
 
-
-" general editing
+" General editing ----------------------------------------------------------{{{
 set number						" auto line numbering
 set showmode					" show current editing mode
 set showcmd						" show partial commands
@@ -102,23 +123,26 @@ set nostartofline				" keep cursor in same col after jumps
 
 " textwidth, indentation, line breaks
 set textwidth=0					" prevent wrapping
+
+" Prefer hard tab indentation
 set tabstop=4					" # of spaces <Tab> counts for
-set softtabstop=4				" # of spaces <Tab> appears to count for
-set noexpandtab					" do not expand <Tab> to spaces
 set shiftwidth=4				" # of spaces to use for each (auto)indent
+set noexpandtab					" do not expand <Tab> to spaces
+
 set linebreak					" wrap lines at 'breakat' chars
-set breakat=\ \	!@*-+;:,./?		" break line after <SP> <TAB> etc.
-set showbreak+=\\				" preceed continued lines with \
+"set breakat=\ \	!@*-+;:,./?		" break line after <SP> <TAB> etc.
+set showbreak+=>>				" preceed continued lines with >>>>
+
+set smartindent
+set autoindent
 set breakindent
+"}}}
 
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" mappings (:help map-special-keys for options)
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" General mappings ---------------------------------------------------------{{{
+" (:help map-special-keys for options)
 let mapleader = "\<Space>"
 let maplocalleader = "\<Bslash>"
 set timeoutlen=700				" ms to wait before acting on ambiguous map
-
 
 "--------------------------------------------------------------
 " Consider remapping CAPS LOCK key to CTRL
@@ -126,8 +150,7 @@ set timeoutlen=700				" ms to wait before acting on ambiguous map
 "   OSX:  System Preferences > Keyboard > Modifier Keys
 "--------------------------------------------------------------
 
-
-"""" NORMAL MODE MAPPINGS """"
+" Normal mode mappings ---------------------------------------------{{{
 
 " ␣zz toggles typewriter scrolling on/off
 nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
@@ -162,9 +185,10 @@ nnoremap <C-l> <C-w>l
 " Shadowed by system command on OSX
 nnoremap <C-Right> :bn<CR>
 nnoremap <C-Left> :bp<CR>
+"}}}
 
 
-"""" NORMAL/VISUAL/SELECT MODE MAPPINGS """"
+" Normal, visual, select mode mappings ------------------------------{{{
 
 " jk^$ operate on screen lines, not logical lines, unless prefixed with g
 noremap j gj
@@ -183,9 +207,10 @@ noremap gp p
 
 " ␣␣ exits visual mode (;; conflicts with repeat-search cmd)
 xnoremap <Space><Space> <Esc>
+"}}}
 
 
-"""" INSERT/COMMAND MODE ONLY MAPPINGS """"
+" Insert and command mode mappings ---------------------------------{{{
 
 " ;; exit insert mode (as do <Esc>, <C-[>, and <C-c>)
 noremap! ;; <Esc>
@@ -193,16 +218,16 @@ noremap! ;; <Esc>
 " <C-d> delete-forward one character, <C-f> one Word
 noremap! <C-d> <Del>
 noremap! <C-f> <C-o>dE
+"}}}
 
+"}}}
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" plain text editing
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" Plain text editing -------------------------------------------------------{{{
 augroup text_settings
 	autocmd!
 
 	" general formatting
-	autocmd FileType text,markdown setl textwidth=64 shiftwidth=5 formatoptions=tamB1
+	autocmd FileType text,markdown setlocal formatoptions=ant textwidth=80 wrapmargin=0
 
 	" g( and g) jump to first (last) character in sentence
 	" g{ and g} jump to first (last) character in paragraph
@@ -214,11 +239,9 @@ augroup text_settings
 	" leave cursor at end of selection following yank - allows pppp ...
 	autocmd FileType text,markdown noremap y y`]
 
-	" ␣w, ␣( and ␣{ select inside current word, sentence, paragraph
-
-	" Visual selection: ' and " enclose in respective quotes
-	autocmd FileType text,markdown xnoremap <buffer> ' c'+'
-	autocmd FileType text,markdown xnoremap <buffer> " c"+"
+	" Visual selection: Ʌ␣' and ␣" enquote in smart quotes
+	autocmd FileType text,markdown xnoremap <buffer> <Leader>' c‘+’
+	autocmd FileType text,markdown xnoremap <buffer> <Leader>" c“+”
 	
 	" Visual selection: <C-b> for bold, <C-i> for italics
 	autocmd FileType text,markdown xnoremap <buffer> <C-i> c*+*
@@ -228,11 +251,9 @@ augroup text_settings
 	autocmd FileType text,markdown nnoremap <buffer> <Leader>O vip`<OO
 	autocmd FileType text,markdown nnoremap <buffer> <Leader>o vip`>oo
 augroup END
+"}}}
 
-
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" vimfile editing
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+" Vim file editing ----------------------------------------------------------{{{
 augroup vim_settings
 	autocmd!
 	autocmd FileType vim setl formatoptions=croq
@@ -243,20 +264,38 @@ augroup vim_settings
 	" comment out a line
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
+"}}}
 
+" Make editing --------------------------------------------------------------{{{
+augroup make_settings
+	autocmd!
+	autocmd FileType make setlocal tabstop=8 shiftwidth=8
+augroup END
+"}}}
 
-"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" vim theme editing tools
-" credit http://vimcasts.org/episodes/creating-colorschemes-for-vim/
+" Theme editing ----------------------------------------------------{{{
+"
 " Useful plugins:
-"	 HiLinkTrace:
-"	 HexHighlight: toggle #rrggbb values<->colors with <leader><F2>
-"	 GuiColorScheme:  convert guifg, guibg colors into cterm equivalents
+"	vim-HiLinkTrace: show syntax and highlight link stacks for word under cursor
+"	HexHighlight: toggle #rrggbb values<->colors with <leader><F2>
+"	GuiColorScheme:  convert guifg, guibg colors into cterm equivalents
+"
+" Other helpful resources:
+"	http://vimcasts.org/episodes/creating-colorschemes-for-vim/
+"	http://www.drchip.org/astronaut/index.html (for vim-HiLinkTrace plugin)
+"
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-" Prints name of highlight group - invoke with <C-S-p>
-nmap <C-S-p> :call <SID>SynStack()<CR>
+" Function to toggle current syntax and highlight class
+" fallback where vim-HiLinkTrace plugin unavailable
 function! <SID>SynStack()
   if exists("*synstack")
 	  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
   endif
 endfunc
+
+" Call :HLT! if plugin loaded, otherwise default to function
+" TODO: write function that checks whether HLT loaded; if so calls, otherwise calls SynStack()
+nmap <C-S-p> :HLT!<CR>
+"nmap <C-S-p> :call <SID>SynStack()<CR>
+"}}}
+
