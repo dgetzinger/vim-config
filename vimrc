@@ -77,61 +77,62 @@ autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
 
 " Status line --------------------------------------------------------------{{{
 " :help 'statusline'
-set laststatus=2				" always show status line
+set laststatus=2			" always show status line
 
-set statusline=b%n:				" buffer number
-set statusline+=%-f				" relative path to current file from PWD
+set statusline=b%n:			" buffer number
+set statusline+=%-f			" relative path to current file from PWD
 set statusline+=\ [%{&ft}]		" filetype
-set statusline+=%=				" right-align following
+set statusline+=%=			" right-align following
 set statusline+=\ +%{&fo}		" filetype options
-set statusline+=\ line=%l\/%L	" current line/total lines
-set statusline+=\ col=%v/%{&tw}	" current col/textwidth
+set statusline+=\ line=%l\/%L		" current line/total lines
+set statusline+=\ col=%v/%{&tw}		" current col/textwidth
 set statusline+=\ U+%04.4B		" Unicode BMP value of char under cursor (4 digits)
 "}}}
 
 " Search options -----------------------------------------------------------{{{
-set ignorecase					" generally ignore case when searching
-set incsearch					" highlight next search term instance
-set hlsearch					" underline all instances of last search
-set smartcase					" ... except when capitals typed
-set wrapscan					" searches wrap around end of buffer
-set gdefault					" apply substitutions globally by default
+set ignorecase smartcase
+set incsearch hlsearch
+set wrapscan		
+set gdefault	
 
-" 'very magic' mode - enable more POSIX-like regex parsing (not portable)
-" normal, visual and operator-pending modes only - / is used a lot in command mode
-noremap / /\v
-noremap ? ?\v
+" 'very magic' mode - enable POSIX regex parsing by default
+" Doesn't work with :g and may mess with vim's search history
+nnoremap / /\v
+vnoremap / /\v
+nnoremap ? ?\v
+vnoremap ? ?\v
+cnoremap %s/ %smagic/
+cnoremap \>s/ \>smagic/
+nnoremap :g/ :g/\v
+nnoremap :g// :g//
 "}}}
 
 " General editing ----------------------------------------------------------{{{
-set number						" auto line numbering
-set showmode					" show current editing mode
-set showcmd						" show partial commands
-set cursorline					" highlight cursor line
-set backspace=eol,start,indent	" allow backspace to delete everything
-set report=0					" report number of lines changed
-set showmatch					" briefly jump to matching paren
-set matchpairs=(:),{:},[:],<:>	" pairs for showmatch option
+set number				" auto line numbering
+set showmode				" show current editing mode
+set showcmd				" show partial commands
+set cursorline				" highlight cursor line
+set backspace=eol,start,indent		" allow backspace to delete everything
+set report=0				" report number of lines changed
+set showmatch matchpairs=(:),{:},[:],<:>
 
 " scrolling and cursor movement
-set scrolloff=3					" minimum context at top/bottom of screen
-set nostartofline				" keep cursor in same col after jumps
+set scrolloff=3				" minimum context at top/bottom of screen
+set nostartofline			" keep cursor in same col after jumps
 
 " textwidth, indentation, line breaks
-set textwidth=0					" prevent wrapping
+set textwidth=0				" prevent wrapping
 
 " Prefer hard tab indentation
-set tabstop=4					" # of spaces <Tab> counts for
-set shiftwidth=4				" # of spaces to use for each (auto)indent
-set noexpandtab					" do not expand <Tab> to spaces
+set tabstop=8				" # of spaces <Tab> counts for
+set shiftwidth=8			" # of spaces to use for each (auto)indent
+set noexpandtab				" do not expand <Tab> to spaces
 
-set linebreak					" wrap lines at 'breakat' chars
-"set breakat=\ \	!@*-+;:,./?		" break line after <SP> <TAB> etc.
-set showbreak+=>>				" preceed continued lines with >>>>
+set linebreak				" wrap lines at 'breakat' chars
+"set breakat=\ \	!@*-+;:,./?	" break line after <SP> <TAB> etc.
+set showbreak+===>			" prefixed to continued lines
 
-set smartindent
-set autoindent
-set breakindent
+set smartindent autoindent breakindent
 "}}}
 
 " General mappings ---------------------------------------------------------{{{
@@ -146,7 +147,7 @@ set timeoutlen=700				" ms to wait before acting on ambiguous map
 "   OSX:  System Preferences > Keyboard > Modifier Keys
 "--------------------------------------------------------------
 
-" Normal mode mappings ---------------------------------------------{{{
+nnoremap :g// :g//" Normal mode mappings ---------------------------------------------{{{
 
 " ␣zz toggles typewriter scrolling on/off
 nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
@@ -155,11 +156,19 @@ nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
 nnoremap <CR> G
 nnoremap <BS> gg
 
-" Select word, Word under cursor
+" Visually select word, Word under cursor
 nnoremap <Leader>w viw
 nnoremap <Leader>W viW
-nnoremap <Leader>( vis
-nnoremap <Leader>{ vip
+
+" Quick-select inside, around brackets
+nnoremap <Leader>( vi(
+nnoremap <Leader>) va)
+nnoremap <Leader>{ vi{
+nnoremap <Leader>} va}
+nnoremap <Leader>[ vi[
+nnoremap <Leader>] va]
+nnoremap <leader>< vi<
+nnoremap <Leader>> va>
 
 " <F2> quick file save
 " <F3> (in vim section below) quick source (vim files only)
@@ -192,10 +201,13 @@ noremap k gk
 noremap gj j
 noremap gk k
 noremap ^ g^
-noremap $ g$
 noremap g^ ^
+noremap $ g$
 noremap g$ $
+noremap 0 g0
+noremap g0 0
 
+" p, P leave cursor at end of pasted selection unless prefixed with g
 noremap P gP
 noremap p gp
 noremap gP P
@@ -218,12 +230,18 @@ noremap! <C-f> <C-o>dE
 
 "}}}
 
-" Plain text editing -------------------------------------------------------{{{
+" Plain text autocommands --------------------------------------------------{{{
 augroup text_settings
 	autocmd!
 
 	" general formatting
-	autocmd FileType text,markdown setlocal formatoptions=ant textwidth=80 wrapmargin=0
+	autocmd FileType text,markdown setlocal formatoptions=ant
+
+	" soft wrapping - setting wrapmargin turns it off
+	autocmd FileType text,markdown setlocal wrap linebreak nolist textwidth=0 wrapmargin=0
+	autocmd FileType text,markdown setlocal nosmartindent noautoindent
+	autocmd FileType text,markdown setlocal showbreak= nonumber
+	autocmd FileType text,markdown setlocal tabstop=5 shiftwidth=5
 
 	" g( and g) jump to first (last) character in sentence
 	" g{ and g} jump to first (last) character in paragraph
@@ -232,10 +250,16 @@ augroup text_settings
 	autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
 	autocmd FileType text,markdown nnoremap <buffer> g} vip`>
 
+	" Quick-select inside, around sentences and paragraphs
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>( vis
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>) vas
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>{ vip
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>} vap
+
 	" leave cursor at end of selection following yank - allows pppp ...
 	autocmd FileType text,markdown noremap y y`]
 
-	" Visual selection: Ʌ␣' and ␣" enquote in smart quotes
+	" Visual selection: Ʌ␣' and ␣" enquote in curly quotes
 	autocmd FileType text,markdown xnoremap <buffer> <Leader>' c‘+’
 	autocmd FileType text,markdown xnoremap <buffer> <Leader>" c“+”
 	
@@ -252,27 +276,27 @@ augroup END
 " Vim file editing ----------------------------------------------------------{{{
 augroup vim_settings
 	autocmd!
-	autocmd FileType vim setl formatoptions=croq
+	autocmd FileType vim setlocal formatoptions=croq number
 
 	" <F3> quick source current file
 	autocmd FileType vim nnoremap <buffer> <F3> :source %<CR>
 
 	" comment out a line
-	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
+	autocmd FileType vim nnoremap <buffer> <Leader>c I"<Esc>
 augroup END
 "}}}
 
 " Shell script editing ------------------------------------------------------{{{
 augroup sh
 	autocmd!
-	autocmd FileType sh setlocal tabstop=8 shiftwidth=8
+	autocmd FileType sh setlocal number
 augroup END
 "}}}
 
 " Make editing --------------------------------------------------------------{{{
 augroup make_settings
 	autocmd!
-	autocmd FileType make setlocal tabstop=8 shiftwidth=8
+	autocmd FileType make setlocal number
 augroup END
 "}}}
 
