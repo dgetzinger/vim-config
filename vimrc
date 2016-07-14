@@ -7,7 +7,7 @@
 "  Date:	11 July 2016
 "
 "  Version:	v0.9
-"
+
 "  Usage:	Copy to $VIMFILES as .vimrc then restart vim
 "
 "  License:	
@@ -32,7 +32,7 @@ if has('gui_running')
 	"set guifont=Liberation_Mono:h10:cANSI
 	"set guifont=Source_Code_Pro:h11:cANSI
 
-	set guioptions-=T			" drop the toolbar
+	set guioptions-=T		" drop the toolbar
 
     if has('gui_win32')			" maximize window on open
 		set guifont=Inconsolata:h12:cANSI
@@ -49,26 +49,26 @@ endif
 
 " Colorscheme --------------------------------------------------------------{{{
 " (save colorscheme script to $VIMFILES/colors
-set t_Co=256					" 256-color terminal
-silent! colorscheme belladonna	" silently ignore if not found
-syntax on						" auto syntax highlighting
+set t_Co=256				" 256-color terminal
+silent! colorscheme belladonna		" silently ignore if not found
+syntax on				" auto syntax highlighting
 "}}}
 
 " General behavior ---------------------------------------------------------{{{
-set nocompatible				" allow various non-vi options
-set modelines=0					" plug security hole (per Steve Losh)
-set hidden						" hide buffer when abandoned
+set nocompatible			" allow various non-vi options
+set modelines=0				" plug security hole (per Steve Losh)
+set hidden				" hide buffer when abandoned
 set clipboard=unnamed			" use register * for system clipboard
-set autowrite					" autosave before switching buffers
-set exrc						" read exrc/vimrc from local dirs
+set autowrite				" autosave before switching buffers
+set exrc				" read exrc/vimrc from local dirs
 set fileformats=unix,dos		" read/write in this format
 set encoding=utf-8
 set formatoptions=croq			" :help 'fo-table' for list
 "}}}
 
 " Filetypes and syntax -----------------------------------------------------{{{
-filetype on						" enable auto filetype detection
-filetype plugin on				" load plugins for specific file types
+filetype on				" enable auto filetype detection
+filetype plugin on			" load plugins for specific file types
 filetype plugin indent on		" filetype-specific indentation
 
 autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
@@ -79,14 +79,16 @@ autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
 " :help 'statusline'
 set laststatus=2			" always show status line
 
-set statusline=b%n:			" buffer number
-set statusline+=%-f			" relative path to current file from PWD
-set statusline+=\ [%{&ft}]		" filetype
+set statusline=\ 			" padding
+set statusline+=\ %-{getcwd()}		" current working directory
 set statusline+=%=			" right-align following
-set statusline+=\ +%{&fo}		" filetype options
-set statusline+=\ line=%l\/%L		" current line/total lines
-set statusline+=\ col=%v/%{&tw}		" current col/textwidth
-set statusline+=\ U+%04.4B		" Unicode BMP value of char under cursor (4 digits)
+set statusline+=\ \ \ \ b%n:		" buffer number
+set statusline+=%t			" relative path to current file from PWD
+set statusline+=%y			" filetype
+set statusline+=\ (%l\/%L:%v/%{&tw})	" (line:col)
+"set statusline+=\ U+%04.4B		" Unicode BMP value of char under cursor (4 digits)
+set statusline+=\ %{strlen(&fo)?&fo:''}	" format options
+set statusline+=\ 			" padding
 "}}}
 
 " Search options -----------------------------------------------------------{{{
@@ -105,6 +107,9 @@ cnoremap %s/ %smagic/
 cnoremap \>s/ \>smagic/
 nnoremap :g/ :g/\v
 nnoremap :g// :g//
+
+" ␣: quick file select
+nmap <Leader>: :%smagic/
 "}}}
 
 " General editing ----------------------------------------------------------{{{
@@ -129,8 +134,8 @@ set shiftwidth=8			" # of spaces to use for each (auto)indent
 set noexpandtab				" do not expand <Tab> to spaces
 
 set linebreak				" wrap lines at 'breakat' chars
-"set breakat=\ \	!@*-+;:,./?	" break line after <SP> <TAB> etc.
-set showbreak+===>			" prefixed to continued lines
+set breakat=\ \	!@*-+;:,./?	" break line after <SP> <TAB> etc.
+set showbreak=--->			" prefixed to continued lines
 
 set smartindent autoindent breakindent
 "}}}
@@ -139,7 +144,7 @@ set smartindent autoindent breakindent
 " (:help map-special-keys for options)
 let mapleader = "\<Space>"
 let maplocalleader = "\<Bslash>"
-set timeoutlen=700				" ms to wait before acting on ambiguous map
+set timeoutlen=750			" ms to wait before acting on ambiguous map
 
 "--------------------------------------------------------------
 " Consider remapping CAPS LOCK key to CTRL
@@ -147,7 +152,7 @@ set timeoutlen=700				" ms to wait before acting on ambiguous map
 "   OSX:  System Preferences > Keyboard > Modifier Keys
 "--------------------------------------------------------------
 
-nnoremap :g// :g//" Normal mode mappings ---------------------------------------------{{{
+" Normal mode mappings ---------------------------------------------{{{
 
 " ␣zz toggles typewriter scrolling on/off
 nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
@@ -173,9 +178,9 @@ nnoremap <Leader>> va>
 " <F2> quick file save
 " <F3> (in vim section below) quick source (vim files only)
 " <F4> buffer delete; <Leader><F4> quit
-nnoremap <F2> :write<CR>
-nnoremap <F4> :bd<CR>
-nnoremap <Leader><F4> :q<CR>
+nnoremap <C-s> :write<CR>
+nnoremap <F4><F4> :bd<CR>
+nnoremap <F4><F4><F4> :q<CR>
 
 " ␣| opens new vertical split and moves to it
 nnoremap <Leader><Bar> <C-w>v<C-w>l
@@ -213,14 +218,14 @@ noremap p gp
 noremap gP P
 noremap gp p
 
-" ␣␣ exits visual mode (;; conflicts with repeat-search cmd)
-xnoremap <Space><Space> <Esc>
+" .. exits visual mode (;; conflicts with repeat-search cmd)
+xnoremap .. <Esc>
 "}}}
 
 
 " Insert and command mode mappings ---------------------------------{{{
 
-" ;; exit insert mode (as do <Esc>, <C-[>, and <C-c>)
+" ;; equals <Esc> (as do <C-[> and <C-c>)
 noremap! ;; <Esc>
 
 " <C-d> delete-forward one character, <C-f> one Word
@@ -235,16 +240,23 @@ augroup text_settings
 	autocmd!
 
 	" general formatting
-	autocmd FileType text,markdown setlocal formatoptions=ant
+	autocmd FileType text,markdown setlocal formatoptions=anq2
 
-	" soft wrapping - setting wrapmargin turns it off
-	autocmd FileType text,markdown setlocal wrap linebreak nolist textwidth=0 wrapmargin=0
-	autocmd FileType text,markdown setlocal nosmartindent noautoindent
-	autocmd FileType text,markdown setlocal showbreak= nonumber
-	autocmd FileType text,markdown setlocal tabstop=5 shiftwidth=5
+	" soft wrapping
+	autocmd FileType text,markdown setlocal nonumber
+	autocmd FileType text,markdown setlocal wrap linebreak nolist textwidth=10000 wrapmargin=0 showbreak=
+	autocmd FileType text,markdown setlocal tabstop=5 shiftwidth=5 nosmartindent noautoindent nobreakindent
+
+	" q, Q autoreformat current paragraph, entire document
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>q igqip`^
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>Q iggVGgq`^
+
+	" autoreformat current paragraph when starting a new one
+	autocmd FileType text,markdown inoremap <buffer> <CR><CR> vipgqvip`>a<CR><CR>
 
 	" g( and g) jump to first (last) character in sentence
 	" g{ and g} jump to first (last) character in paragraph
+	" (default (,),{,} jump to last character *around* sentence/paragraph
 	autocmd FileType text,markdown nnoremap <buffer> g( vis`<
 	autocmd FileType text,markdown nnoremap <buffer> g) vis`>
 	autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
@@ -256,20 +268,25 @@ augroup text_settings
 	autocmd FileType text,markdown nnoremap <buffer> <Leader>{ vip
 	autocmd FileType text,markdown nnoremap <buffer> <Leader>} vap
 
-	" leave cursor at end of selection following yank - allows pppp ...
-	autocmd FileType text,markdown noremap y y`]
+	" ␣O and ␣o reformat current paragraph, open a new one two lines above, below
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>O vipgqvip`<OO
+	autocmd FileType text,markdown nnoremap <buffer> <Leader>o vipgqvip`>oo
 
-	" Visual selection: Ʌ␣' and ␣" enquote in curly quotes
-	autocmd FileType text,markdown xnoremap <buffer> <Leader>' c‘+’
-	autocmd FileType text,markdown xnoremap <buffer> <Leader>" c“+”
+	" ␣' and ␣" enquote visual selection
+	" U+2018, U+2019 are curly single quotes, U+201C & U+201D double
+	autocmd FileType text,markdown xnoremap <buffer> <Leader>' c'+'
+	autocmd FileType text,markdown xnoremap <buffer> <Leader>" c"+"
 	
 	" Visual selection: <C-b> for bold, <C-i> for italics
 	autocmd FileType text,markdown xnoremap <buffer> <C-i> c*+*
 	autocmd FileType text,markdown xnoremap <buffer> <C-b> c__+__
 
-	" ␣O and ␣o open new paragraph two lines above, below current one
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>O vip`<OO
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>o vip`>oo
+	" leave cursor at end of selection following yank - allows pppp ...
+	autocmd FileType text,markdown noremap y y`]
+
+	autocmd FileType text,markdown noremap G G}
+	autocmd FileType text,markdown noremap gg gg0
+
 augroup END
 "}}}
 
@@ -315,9 +332,9 @@ augroup END
 " Function to toggle current syntax and highlight class
 " fallback where vim-HiLinkTrace plugin unavailable
 function! <SID>SynStack()
-  if exists("*synstack")
-	  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-  endif
+    if exists("*synstack")
+	echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+    endif
 endfunc
 
 " Call :HLT! if plugin loaded, otherwise default to function
