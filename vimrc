@@ -2,9 +2,10 @@
 "
 "  Name:	.vimrc - personalized vim run control file
 "
-"  Author:	David C. Getzinger <dgetzinger|NOSPAM|777@gmail.com> (delete "|NOSPAM|")
+"  Author:	David C. Getzinger
+"  		<dgetzinger_NOSPAM_777@gmail.com> (delete "_NOSPAM_")
 "
-"  Date:	11 July 2016
+"  Date:	Thursday July 3, 2016 19:54:30 HKT
 "
 "  Version:	v0.9
 
@@ -72,7 +73,7 @@ filetype plugin on			" load plugins for specific file types
 filetype plugin indent on		" filetype-specific indentation
 
 autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
-autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
+"autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
 "}}}
 
 " Status line --------------------------------------------------------------{{{
@@ -156,6 +157,13 @@ set timeoutlen=750			" ms to wait before acting on ambiguous map
 
 " ␣zz toggles typewriter scrolling on/off
 nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
+
+" \t prints timestamp in insert or normal modes (note localleader = "\")
+inoremap <localleader>t <C-r>=GetTimeStamp()<CR>
+nnoremap <localleader>t i<C-r>=GetTimeStamp()<CR><Esc>
+function! GetTimeStamp()
+	return strftime("%A %B %3, %Y %H:%M:%S %Z")
+endfunction
 
 " #<CR> jump straight to line #
 nnoremap <CR> G
