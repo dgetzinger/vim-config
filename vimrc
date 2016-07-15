@@ -13,7 +13,7 @@
 "
 "  License:	
 "
-"  NOTES:	Script loads colorscheme "belladonna" if it is installed
+"  NOTES:	Script loads colorscheme "belladonna" if installed
 "
 "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -64,7 +64,43 @@ set autowrite				" autosave before switching buffers
 set exrc				" read exrc/vimrc from local dirs
 set fileformats=unix,dos		" read/write in this format
 set encoding=utf-8
+
 set formatoptions=croq			" :help 'fo-table' for list
+if v:version > 703 || v:version == 703 && has("patch541")
+	set formatoptions+=j " Delete comment character when joining commented lines
+endif
+
+set number				" auto line numbering
+set showmode				" show current editing mode
+set showcmd				" show partial commands
+set cursorline				" highlight cursor line
+set backspace=eol,start,indent		" allow backspace to delete everything
+set report=0				" report number of lines changed
+set showmatch matchpairs=(:),{:},[:],<:>
+
+if &listchars ==# 'eol:$'
+	set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
+endif
+set nolist
+
+" scrolling and cursor movement
+set scrolloff=3				" minimum context at top/bottom of screen
+set nostartofline			" keep cursor in same col after jumps
+
+" textwidth, indentation, line breaks
+set textwidth=0				" prevent wrapping
+
+" Prefer hard tab indentation
+set tabstop=8				" # of spaces <Tab> counts for
+set shiftwidth=8			" # of spaces to use for each (auto)indent
+set noexpandtab				" do not expand <Tab> to spaces
+
+set linebreak				" wrap lines at 'breakat' chars
+set breakat=\ \	!@*-+;:,./?	" break line after <SP> <TAB> etc.
+set showbreak===>			" prefixed to continued lines
+
+set smartindent autoindent breakindent
+
 "}}}
 
 " Filetypes and syntax -----------------------------------------------------{{{
@@ -73,7 +109,7 @@ filetype plugin on			" load plugins for specific file types
 filetype plugin indent on		" filetype-specific indentation
 
 autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
-"autocmd BufEnter * if &filetype == "" | setlocal ft=text | endif
+
 "}}}
 
 " Status line --------------------------------------------------------------{{{
@@ -111,31 +147,6 @@ nnoremap :g// :g//
 "}}}
 
 " General editing ----------------------------------------------------------{{{
-set number				" auto line numbering
-set showmode				" show current editing mode
-set showcmd				" show partial commands
-set cursorline				" highlight cursor line
-set backspace=eol,start,indent		" allow backspace to delete everything
-set report=0				" report number of lines changed
-set showmatch matchpairs=(:),{:},[:],<:>
-
-" scrolling and cursor movement
-set scrolloff=3				" minimum context at top/bottom of screen
-set nostartofline			" keep cursor in same col after jumps
-
-" textwidth, indentation, line breaks
-set textwidth=0				" prevent wrapping
-
-" Prefer hard tab indentation
-set tabstop=8				" # of spaces <Tab> counts for
-set shiftwidth=8			" # of spaces to use for each (auto)indent
-set noexpandtab				" do not expand <Tab> to spaces
-
-set linebreak				" wrap lines at 'breakat' chars
-set breakat=\ \	!@*-+;:,./?	" break line after <SP> <TAB> etc.
-set showbreak=--->			" prefixed to continued lines
-
-set smartindent autoindent breakindent
 "}}}
 
 " General mappings ---------------------------------------------------------{{{
@@ -158,13 +169,14 @@ nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 " \t prints timestamp in insert or normal modes (note leader = "\")
 inoremap <leader>t <C-r>=GetTimeStamp()<CR>
 nnoremap <leader>t i<C-r>=GetTimeStamp()<CR><Esc>
+
 function! GetTimeStamp()
-	return strftime("%A %B %3, %Y %H:%M:%S %Z")
+	return strftime("%A %B %e, %Y %H:%M:%S %Z")
 endfunction
 
 " #<CR> jump straight to line #
-nnoremap <CR> G
-nnoremap <BS> gg
+nnoremap <CR> G$
+nnoremap <BS> gg0
 
 " Visually select word, Word under cursor
 nnoremap <localleader>w viw
@@ -184,8 +196,8 @@ nnoremap <localleader>> va>
 " <F3> (in vim section below) quick source (vim files only)
 " <F4> buffer delete; <localleader><F4> quit
 nnoremap <C-s> :write<CR>
-nnoremap <F4><F4> :bd<CR>
-nnoremap <F4><F4><F4> :q<CR>
+nnoremap <F4> :bd<CR>
+nnoremap <F4><F4> :q<CR>
 
 " ␣| opens new vertical split and moves to it
 nnoremap <localleader><Bar> <C-w>v<C-w>l
@@ -295,34 +307,34 @@ augroup text_settings
 augroup END
 "}}}
 
-" Vim file editing ----------------------------------------------------------{{{
+" Vim file autocommands -----------------------------------------------------{{{
 augroup vim_settings
 	autocmd!
-	autocmd FileType vim setlocal formatoptions=croq number
 
 	" <F3> quick source current file
 	autocmd FileType vim nnoremap <buffer> <F3> :source %<CR>
 
 	" comment out a line
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
+
 augroup END
 "}}}
 
-" Shell script editing ------------------------------------------------------{{{
+" Shell script autocommands -------------------------------------------------{{{
 augroup sh
 	autocmd!
 	autocmd FileType sh setlocal number
 augroup END
 "}}}
 
-" Make editing --------------------------------------------------------------{{{
+" Make autocommands ---------------------------------------------------------{{{
 augroup make_settings
 	autocmd!
 	autocmd FileType make setlocal number
 augroup END
 "}}}
 
-" Theme editing ----------------------------------------------------{{{
+" Theme autocommands -----------------------------------------------{{{
 "
 " Useful plugins:
 "	vim-HiLinkTrace: show syntax and highlight link stacks for word under cursor
@@ -344,7 +356,7 @@ endfunc
 
 " Call :HLT! if plugin loaded, otherwise default to function
 " TODO: write function that checks whether HLT loaded; if so calls, otherwise calls SynStack()
-nmap <C-S-p> :HLT!<CR>
+nmap <silent> <C-S-p> :HLT!<CR>
 "nmap <C-S-p> :call <SID>SynStack()<CR>
 "}}}
 
