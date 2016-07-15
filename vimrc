@@ -80,16 +80,15 @@ autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
 " :help 'statusline'
 set laststatus=2			" always show status line
 
-set statusline=\ 			" padding
-set statusline+=\ %-{getcwd()}		" current working directory
-set statusline+=%=			" right-align following
-set statusline+=\ \ \ \ b%n:		" buffer number
+set statusline=
+set statusline+=b%n:			" buffer number
 set statusline+=%t			" relative path to current file from PWD
-set statusline+=%y			" filetype
-set statusline+=\ (%l\/%L:%v/%{&tw})	" (line:col)
+set statusline+=\ %y			" filetype
+set statusline+=\ (%l\/%L,\ %v/%{&tw})	" (line:col)
 "set statusline+=\ U+%04.4B		" Unicode BMP value of char under cursor (4 digits)
 set statusline+=\ %{strlen(&fo)?&fo:''}	" format options
-set statusline+=\ 			" padding
+set statusline+=%=			" right-align following
+set statusline+=\ %-{getcwd()}		" current working directory
 "}}}
 
 " Search options -----------------------------------------------------------{{{
@@ -104,13 +103,11 @@ nnoremap / /\v
 vnoremap / /\v
 nnoremap ? ?\v
 vnoremap ? ?\v
-cnoremap %s/ %smagic/
-cnoremap \>s/ \>smagic/
+cnoremap %s/ %s/v
+cnoremap \>s/ \>s/v
 nnoremap :g/ :g/\v
 nnoremap :g// :g//
 
-" ␣: quick file select
-nmap <Leader>: :%smagic/
 "}}}
 
 " General editing ----------------------------------------------------------{{{
@@ -143,8 +140,8 @@ set smartindent autoindent breakindent
 
 " General mappings ---------------------------------------------------------{{{
 " (:help map-special-keys for options)
-let mapleader = "\<Space>"
-let maplocalleader = "\<Bslash>"
+let mapleader		= "\<Bslash>"
+let maplocalleader	= "\<Space>"
 set timeoutlen=750			" ms to wait before acting on ambiguous map
 
 "--------------------------------------------------------------
@@ -156,11 +153,11 @@ set timeoutlen=750			" ms to wait before acting on ambiguous map
 " Normal mode mappings ---------------------------------------------{{{
 
 " ␣zz toggles typewriter scrolling on/off
-nnoremap <Leader>zz :let &scrolloff=999-&scrolloff<CR>
+nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 
-" \t prints timestamp in insert or normal modes (note localleader = "\")
-inoremap <localleader>t <C-r>=GetTimeStamp()<CR>
-nnoremap <localleader>t i<C-r>=GetTimeStamp()<CR><Esc>
+" \t prints timestamp in insert or normal modes (note leader = "\")
+inoremap <leader>t <C-r>=GetTimeStamp()<CR>
+nnoremap <leader>t i<C-r>=GetTimeStamp()<CR><Esc>
 function! GetTimeStamp()
 	return strftime("%A %B %3, %Y %H:%M:%S %Z")
 endfunction
@@ -191,7 +188,7 @@ nnoremap <F4><F4> :bd<CR>
 nnoremap <F4><F4><F4> :q<CR>
 
 " ␣| opens new vertical split and moves to it
-nnoremap <Leader><Bar> <C-w>v<C-w>l
+nnoremap <localleader><Bar> <C-w>v<C-w>l
 
 " Quicker movements around splits using Ctrl+hjkl keys
 nnoremap <C-h> <C-w>h
@@ -227,7 +224,7 @@ noremap gP P
 noremap gp p
 
 " .. exits visual mode (;; conflicts with repeat-search cmd)
-xnoremap .. <Esc>
+vnoremap .. <Esc>
 "}}}
 
 
