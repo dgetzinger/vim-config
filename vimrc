@@ -167,22 +167,22 @@ nnoremap <CR> G
 nnoremap <BS> gg
 
 " Visually select word, Word under cursor
-nnoremap <Leader>w viw
-nnoremap <Leader>W viW
+nnoremap <localleader>w viw
+nnoremap <localleader>W viW
 
 " Quick-select inside, around brackets
-nnoremap <Leader>( vi(
-nnoremap <Leader>) va)
-nnoremap <Leader>{ vi{
-nnoremap <Leader>} va}
-nnoremap <Leader>[ vi[
-nnoremap <Leader>] va]
-nnoremap <leader>< vi<
-nnoremap <Leader>> va>
+nnoremap <localleader>( vi(
+nnoremap <localleader>) va)
+nnoremap <localleader>{ vi{
+nnoremap <localleader>} va}
+nnoremap <localleader>[ vi[
+nnoremap <localleader>] va]
+nnoremap <localleader>< vi<
+nnoremap <localleader>> va>
 
 " <F2> quick file save
 " <F3> (in vim section below) quick source (vim files only)
-" <F4> buffer delete; <Leader><F4> quit
+" <F4> buffer delete; <localleader><F4> quit
 nnoremap <C-s> :write<CR>
 nnoremap <F4><F4> :bd<CR>
 nnoremap <F4><F4><F4> :q<CR>
@@ -253,8 +253,8 @@ augroup text_settings
 	autocmd FileType text,markdown setlocal tabstop=5 shiftwidth=5 nosmartindent noautoindent nobreakindent
 
 	" q, Q autoreformat current paragraph, entire document
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>q igqip`^
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>Q iggVGgq`^
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>q igqip`^
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>Q iggVGgq`^
 
 	" autoreformat current paragraph when starting a new one
 	autocmd FileType text,markdown inoremap <buffer> <CR><CR> vipgqvip`>a<CR><CR>
@@ -268,19 +268,19 @@ augroup text_settings
 	autocmd FileType text,markdown nnoremap <buffer> g} vip`>
 
 	" Quick-select inside, around sentences and paragraphs
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>( vis
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>) vas
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>{ vip
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>} vap
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>( vis
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>) vas
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>{ vip
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>} vap
 
 	" ␣O and ␣o reformat current paragraph, open a new one two lines above, below
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>O vipgqvip`<OO
-	autocmd FileType text,markdown nnoremap <buffer> <Leader>o vipgqvip`>oo
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>O vipgqvip`<OO
+	autocmd FileType text,markdown nnoremap <buffer> <localleader>o vipgqvip`>oo
 
 	" ␣' and ␣" enquote visual selection
 	" U+2018, U+2019 are curly single quotes, U+201C & U+201D double
-	autocmd FileType text,markdown xnoremap <buffer> <Leader>' c'+'
-	autocmd FileType text,markdown xnoremap <buffer> <Leader>" c"+"
+	autocmd FileType text,markdown xnoremap <buffer> <localleader>' c'+'
+	autocmd FileType text,markdown xnoremap <buffer> <localleader>" c"+"
 	
 	" Visual selection: <C-b> for bold, <C-i> for italics
 	autocmd FileType text,markdown xnoremap <buffer> <C-i> c*+*
@@ -304,7 +304,7 @@ augroup vim_settings
 	autocmd FileType vim nnoremap <buffer> <F3> :source %<CR>
 
 	" comment out a line
-	autocmd FileType vim nnoremap <buffer> <Leader>c I"<Esc>
+	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
 augroup END
 "}}}
 
