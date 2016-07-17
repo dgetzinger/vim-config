@@ -166,13 +166,25 @@ let mapleader		= "\<bslash>"
 let maplocalleader	= "\<space>"
 set timeoutlen=750			" ms to wait for map completion
 
+"}}}
+
+" Normal mode mappings ---------------------------------------------{{{
+
+" Escape mappings
 noremap! jk <ESC>
 noremap! ;; <ESC>
 vnoremap .. <ESC>
 
-"}}}
+" Quick jump to line or to end
+nnoremap <C-g> G
 
-" Normal mode mappings ---------------------------------------------{{{
+" Quick select entire file - saves current cursor position in ``
+nnoremap <C-a><C-a> :call SelectEntireFile()<CR>
+function! SelectEntireFile()
+	let l:saved = getpos("'s")
+	normal! gg0VG$
+	call setpos("'`", l:saved)
+endfunction
 
 " \zz toggles typewriter scrolling on/off
 nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
@@ -272,7 +284,7 @@ augroup text_settings
 
 	" soft wrapping
 	autocmd FileType text,markdown setlocal nonumber
-	autocmd FileType text,markdown setlocal wrap linebreak nolist textwidth=10000 wrapmargin=0 showbreak=
+	autocmd FileType text,markdown setlocal wrap linebreak nolist textwidth=1000000 wrapmargin=0 showbreak=
 	autocmd FileType text,markdown setlocal tabstop=5 shiftwidth=5 nosmartindent noautoindent nobreakindent
 
 	" q, Q autoreformat current paragraph, entire document
@@ -324,9 +336,6 @@ augroup END
 " Vim file autocommands -----------------------------------------------------{{{
 augroup vim_settings
 	autocmd!
-
-	" <F3> quick source current file
-	autocmd FileType vim nnoremap <buffer> <F3> :source %<CR>
 
 	" comment out a line
 	autocmd FileType vim nnoremap <buffer> <localleader>c I"<Esc>
