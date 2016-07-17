@@ -5,7 +5,7 @@
 "  Author:	David C. Getzinger
 "  		<dgetzinger_NOSPAM_777@gmail.com> (delete "_NOSPAM_")
 "
-"  Date:	Thursday July 3, 2016 19:54:30 HKT
+"  Date:	Sunday July 17, 2016 10:53:16 HKT
 "
 "  Version:	v0.9
 
@@ -88,7 +88,6 @@ set report=0				" report number of lines changed
 set showmatch
 	\ matchpairs=(:),{:},[:],<:>
 
-
 " format options
 set formatoptions=croq			" :help 'fo-table' for list
 if v:version > 703 || v:version == 703 && has("patch541")
@@ -96,7 +95,7 @@ if v:version > 703 || v:version == 703 && has("patch541")
 endif
 
 if &listchars ==# 'eol:$'
-	set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
+	set listchars+=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 endif
 set nolist
 
@@ -104,58 +103,56 @@ set nolist
 set scrolloff=3				" minimum context at top/bottom of screen
 set nostartofline			" keep cursor in same col after jumps
 
-" textwidth, indentation, line breaks
-set textwidth=1000000			" prevent wrapping
-
 " tabbing
 set tabstop=8				" # of spaces <Tab> counts for
 set shiftwidth=8			" # of spaces to use for each (auto)indent
 set noexpandtab				" do not expand <Tab> to spaces
 
+" line breaking
+set textwidth=0				" prevent wrapping
 set linebreak				" wrap lines at 'breakat' chars
-set breakat=\ \	!@*-+;:,./?	" break line after <SP> <TAB> etc.
+set breakat=\ \	!@*-+;:,./?		" break line after <SP> <TAB> etc.
 set showbreak===>			" prefixed to continued lines
 
+" indentation
 set smartindent autoindent breakindent
+
+" kill the fucking beep
+set noerrorbells visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
 
 "}}}
 
 " Filetypes and syntax -----------------------------------------------------{{{
+
 filetype on				" enable auto filetype detection
 filetype plugin on			" load plugins for specific file types
 filetype plugin indent on		" filetype-specific indentation
 
-autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
+"}}}
+
+" Encryption ---------------------------------------------------------------{{{
+
+if v:version > 730 && has("patch399")
+	set cryptmethod=blowfish2
+else
+	set cryptmethod=zip
+endif
 
 "}}}
 
 " Search options -----------------------------------------------------------{{{
-set ignorecase smartcase
+set ignorecase smartcase		" ignore case absent caps in search pattern
 set incsearch hlsearch
 set wrapscan		
-set gdefault	
+set gdefault				" substitutions are global by default
 
-" 'very magic' mode - enable POSIX regex parsing by default
-" Doesn't work with :g and may mess with vim's search history
-nnoremap / /\v
-vnoremap / /\v
-nnoremap ? ?\v
-vnoremap ? ?\v
-cnoremap %s/ %s/v
-cnoremap \>s/ \>s/v
-nnoremap :g/ :g/\v
-nnoremap :g// :g//
+nnoremap <localleader>L :set hlsearch<CR>
+nnoremap <localleader>l :nohlsearch<CR>
 
 "}}}
 
 " General editing ----------------------------------------------------------{{{
-"}}}
-
-" General mappings ---------------------------------------------------------{{{
-" (:help map-special-keys for options)
-let mapleader		= "\<Bslash>"
-let maplocalleader	= "\<Space>"
-set timeoutlen=750			" ms to wait before acting on ambiguous map
 
 "--------------------------------------------------------------
 " Consider remapping CAPS LOCK key to CTRL
@@ -163,22 +160,58 @@ set timeoutlen=750			" ms to wait before acting on ambiguous map
 "   OSX:  System Preferences > Keyboard > Modifier Keys
 "--------------------------------------------------------------
 
+" General mappings ---------------------------------------------------------{{{
+" (:help map-special-keys for options)
+let mapleader		= "\<bslash>"
+let maplocalleader	= "\<space>"
+set timeoutlen=750			" ms to wait for map completion
+
+noremap! jk <ESC>
+noremap! ;; <ESC>
+vnoremap .. <ESC>
+
+"}}}
+
 " Normal mode mappings ---------------------------------------------{{{
 
-" ␣zz toggles typewriter scrolling on/off
+" \zz toggles typewriter scrolling on/off
 nnoremap <leader>zz :let &scrolloff=999-&scrolloff<CR>
 
 " \t prints timestamp in insert or normal modes (note leader = "\")
 inoremap <leader>t <C-r>=GetTimeStamp()<CR>
 nnoremap <leader>t i<C-r>=GetTimeStamp()<CR><Esc>
 
-function! GetTimeStamp()
+function! GetTimeStamp() 		" see http://strftime.net/
+	" -> e.g., "Sunday July 17, 2016 08:48:09 HKT"
 	return strftime("%A %B %e, %Y %H:%M:%S %Z")
 endfunction
 
-" #<CR> jump straight to line #
-nnoremap <CR> G$
-nnoremap <BS> gg0
+" save/quit shortcuts
+nnoremap <C-s> :write<CR>
+nnoremap <C-s><C-s> :write all<CR>
+nnoremap <C-q><C-q> :quit<CR>
+
+" Source/unload shortcuts
+nnoremap <F3> :source %<CR>
+nnoremap <S-F3> :bunload<CR>
+
+" Move to new split when it opens
+nnoremap <C-w>v <C-w>v<C-w>l
+nnoremap <C-w>s <C-w>s<C-w>k
+
+" Jump around splits efficiently
+nnoremap <localleader><C-h> <C-w>h<CR>
+nnoremap <localleader><C-l> <C-w>l<CR>
+nnoremap <localleader><C-j> <C-w>j<CR>
+nnoremap <localleader><C-k> <C-w>k<CR>
+
+" Cycle between buffers
+nnoremap <C-h> :bp<CR>
+nnoremap <C-l> :bn<CR>
+
+" Jump multiple screen lines at one time
+nnoremap <C-j> 5gj5<C-e>zz
+nnoremap <C-k> 5gk5<C-y>zz
 
 " Visually select word, Word under cursor
 nnoremap <localleader>w viw
@@ -194,26 +227,6 @@ nnoremap <localleader>] va]
 nnoremap <localleader>< vi<
 nnoremap <localleader>> va>
 
-" <F2> quick file save
-" <F3> (in vim section below) quick source (vim files only)
-" <F4> buffer delete; <localleader><F4> quit
-nnoremap <C-s> :write<CR>
-nnoremap <F4> :bd<CR>
-nnoremap <F4><F4> :q<CR>
-
-" ␣| opens new vertical split and moves to it
-nnoremap <localleader><Bar> <C-w>v<C-w>l
-
-" Quicker movements around splits using Ctrl+hjkl keys
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
-
-" <C-Right> and <C-Left>: cycle forward (back) through open buffers
-" Shadowed by system command on OSX
-nnoremap <C-Right> :bn<CR>
-nnoremap <C-Left> :bp<CR>
 "}}}
 
 
@@ -237,19 +250,15 @@ noremap p gp
 noremap gP P
 noremap gp p
 
-" .. exits visual mode (;; conflicts with repeat-search cmd)
-vnoremap .. <Esc>
 "}}}
 
 
 " Insert and command mode mappings ---------------------------------{{{
 
-" ;; equals <Esc> (as do <C-[> and <C-c>)
-noremap! ;; <Esc>
-
 " <C-d> delete-forward one character, <C-f> one Word
 noremap! <C-d> <Del>
 noremap! <C-f> <C-o>dE
+
 "}}}
 
 "}}}
@@ -305,6 +314,9 @@ augroup text_settings
 
 	autocmd FileType text,markdown noremap G G}
 	autocmd FileType text,markdown noremap gg gg0
+
+	" insert &nbsp; (U+00A0)
+	autocmd FileType text,markdown inoremap <leader><space> <C-v>u00A0
 
 augroup END
 "}}}
