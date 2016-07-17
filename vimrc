@@ -5,7 +5,7 @@
 "  Author:	David C. Getzinger
 "  		<dgetzinger_NOSPAM_777@gmail.com> (delete "_NOSPAM_")
 "
-"  Date:	Sunday July 17, 2016 10:53:16 HKT
+"  Date:	Sunday July 17, 2016 17:00:49 HKT
 "
 "  Version:	v0.9
 
@@ -162,21 +162,19 @@ nnoremap <localleader>l :nohlsearch<CR>
 
 " General mappings ---------------------------------------------------------{{{
 " (:help map-special-keys for options)
-let mapleader		= "\<bslash>"
-let maplocalleader	= "\<space>"
+let mapleader		= "\\"
+let maplocalleader	= "<Space>"
 set timeoutlen=750			" ms to wait for map completion
 
 "}}}
 
 " Normal mode mappings ---------------------------------------------{{{
 
-" Escape mappings
+" Escape mappings (always forgetting)
 noremap! jk <ESC>
+noremap! jj <ESC>
 noremap! ;; <ESC>
 vnoremap .. <ESC>
-
-" Quick jump to line or to end
-nnoremap <C-g> G
 
 " Quick select entire file - saves current cursor position in ``
 nnoremap <C-a><C-a> :call SelectEntireFile()<CR>
@@ -200,7 +198,7 @@ endfunction
 
 " save/quit shortcuts
 nnoremap <C-s> :write<CR>
-nnoremap <C-s><C-s> :write all<CR>
+nnoremap <C-s><C-s> :wall<CR>
 nnoremap <C-q><C-q> :quit<CR>
 
 " Source/unload shortcuts
@@ -270,6 +268,10 @@ noremap gp p
 " <C-d> delete-forward one character, <C-f> one Word
 noremap! <C-d> <Del>
 noremap! <C-f> <C-o>dE
+
+" ^e and ^y work in insert mode too
+inoremap <C-e> <C-x><C-e>
+inoremap <C-y> <C-x><C-y>
 
 "}}}
 
