@@ -55,6 +55,21 @@ silent! colorscheme belladonna		" silently ignore if not found
 syntax on				" auto syntax highlighting
 "}}}
 
+" Status line --------------------------------------------------------------{{{
+" :help 'statusline'
+set laststatus=2			" always show status line
+
+set statusline=
+set statusline+=b%n:			" buffer number
+set statusline+=%t			" relative path to current file from PWD
+set statusline+=\ %y			" filetype
+set statusline+=\ (%l\/%L,\ %v/%{&tw})	" (line:col)
+"set statusline+=\ U+%04.4B		" Unicode BMP value of char under cursor (4 digits)
+set statusline+=\ %{strlen(&fo)?&fo:''}	" format options
+set statusline+=%=			" right-align following
+set statusline+=\ %-{getcwd()}		" current working directory
+"}}}
+
 " General behavior ---------------------------------------------------------{{{
 set nocompatible			" allow various non-vi options
 set modelines=0				" plug security hole (per Steve Losh)
@@ -64,19 +79,21 @@ set autowrite				" autosave before switching buffers
 set exrc				" read exrc/vimrc from local dirs
 set fileformats=unix,dos		" read/write in this format
 set encoding=utf-8
-
-set formatoptions=croq			" :help 'fo-table' for list
-if v:version > 703 || v:version == 703 && has("patch541")
-	set formatoptions+=j " Delete comment character when joining commented lines
-endif
-
 set number				" auto line numbering
 set showmode				" show current editing mode
 set showcmd				" show partial commands
 set cursorline				" highlight cursor line
 set backspace=eol,start,indent		" allow backspace to delete everything
 set report=0				" report number of lines changed
-set showmatch matchpairs=(:),{:},[:],<:>
+set showmatch
+	\ matchpairs=(:),{:},[:],<:>
+
+
+" format options
+set formatoptions=croq			" :help 'fo-table' for list
+if v:version > 703 || v:version == 703 && has("patch541")
+	set formatoptions+=j " Delete comment character when joining commented lines
+endif
 
 if &listchars ==# 'eol:$'
 	set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
@@ -88,9 +105,9 @@ set scrolloff=3				" minimum context at top/bottom of screen
 set nostartofline			" keep cursor in same col after jumps
 
 " textwidth, indentation, line breaks
-set textwidth=0				" prevent wrapping
+set textwidth=1000000			" prevent wrapping
 
-" Prefer hard tab indentation
+" tabbing
 set tabstop=8				" # of spaces <Tab> counts for
 set shiftwidth=8			" # of spaces to use for each (auto)indent
 set noexpandtab				" do not expand <Tab> to spaces
@@ -110,21 +127,6 @@ filetype plugin indent on		" filetype-specific indentation
 
 autocmd BufNewFile,BufRead *.md,*.markdown,*.mkd,*.mmd set filetype=markdown
 
-"}}}
-
-" Status line --------------------------------------------------------------{{{
-" :help 'statusline'
-set laststatus=2			" always show status line
-
-set statusline=
-set statusline+=b%n:			" buffer number
-set statusline+=%t			" relative path to current file from PWD
-set statusline+=\ %y			" filetype
-set statusline+=\ (%l\/%L,\ %v/%{&tw})	" (line:col)
-"set statusline+=\ U+%04.4B		" Unicode BMP value of char under cursor (4 digits)
-set statusline+=\ %{strlen(&fo)?&fo:''}	" format options
-set statusline+=%=			" right-align following
-set statusline+=\ %-{getcwd()}		" current working directory
 "}}}
 
 " Search options -----------------------------------------------------------{{{
