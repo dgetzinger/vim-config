@@ -7,7 +7,7 @@
 ""  Maintainer:	David C. Getzinger
 "" 		<dgetzinger_NOSPAM_777@gmail.com> (delete "_NOSPAM_")
 ""
-""  Last Mod:	Tuesday July 19, 2016 17:42:05 China Standard Time
+""  Last Mod:	Wednesday July 20, 2016 16:38:21 China Standard Time
 ""
 ""  Usage:	Copy to $VIMFILES as .vimrc then restart vim
 ""
@@ -90,16 +90,14 @@ set statusline+=\ %-{getcwd()}		" current working directory
 "" Alternatives to <Esc> --------------
 noremap! jk <ESC>
 noremap! jj <ESC>
-noremap! ;; <ESC>
-vnoremap .. <ESC>
 
 "" Mapping ----------------------------
 "" Consider remapping CAPS LOCK key to CTRL
 ""   Windows:  SharpKeys http://http://sharpkeys.codeplex.com/
 ""   OSX:  System Preferences > Keyboard > Modifier Keys
 
-let mapleader		= "\<Bslash>"
-let maplocalleader	= "\<Space>"
+let mapleader		= "\<bslash>"
+let maplocalleader	= "\<space>"
 set timeoutlen=750			" ms to wait for map completion
 
 "" Format options ---------------------
@@ -114,7 +112,7 @@ set autowrite				" autosave before switching buffers
 set exrc				" read exrc/vimrc from local dirs
 set fileformats=unix,dos		" read/write in this format
 set encoding=utf-8
-set number				" auto line numbering
+set relativenumber			" auto line numbering relative to cursor
 set showmode				" show current editing mode
 set showcmd				" show partial commands
 set cursorline				" highlight cursor line
@@ -130,9 +128,8 @@ set incsearch hlsearch
 set wrapscan		
 set gdefault				" substitutions are global by default
 
-""" l to turn off search results, L to show them again
-nnoremap <localleader>L :set hlsearch<CR>
-nnoremap <localleader>l :nohlsearch<CR>
+""" <C-l> to turn off search results
+nnoremap <C-l> <C-u>:nohlsearch<CR><C-l>
 
 "" Scrolling ---------------------------
 set scrolloff=3				" minimum context at top/bottom of screen
@@ -162,18 +159,23 @@ set cryptmethod=blowfish2		" :X to encrypt
 set noerrorbells visualbell t_vb=
 autocmd GUIEnter * set visualbell t_vb=
 
+"" Filetype discovery -----------------
+autocmd BufRead,BufNewFile *.fountain,*.ftn set filetype=fountain
+
 "}}}
 
 
 " General editing ----------------------------------------------------------{{{
 
-"" Split actions ----------------------
+"" Pane actions -----------------------
 
-""" Automatically jump to new split
+""" Automatically jump to new pane
+nnoremap <leader><bar> <C-w>v<C-w>l
+nnoremap <leader>_ <C-w>s<C-w>k
 nnoremap <C-w>v <C-w>v<C-w>l
 nnoremap <C-w>s <C-w>s<C-w>k
 
-""" ␣<C-x> jump around splits
+""" ␣<C-x> jump around panes
 nnoremap <localleader><C-h> <C-w>h<CR>
 nnoremap <localleader><C-l> <C-w>l<CR>
 nnoremap <localleader><C-j> <C-w>j<CR>
@@ -186,26 +188,28 @@ nnoremap <localleader><C-k> <C-w>k<CR>
 autocmd BufEnter * lcd %:p:h
 
 """ Cycle through buffers
-nnoremap <C-h> :bp<CR>
-nnoremap <C-l> :bn<CR>
+nnoremap <S-Right> :bn<CR>
+nnoremap <S-Left> :bp<CR>
+"""" <C-^> = toggle between buffers
 
 """ Save, source, unload
 """" normal mode
-nnoremap <C-s> :write<CR>
-nnoremap <localleader><C-s> :wall<CR>
+nnoremap <leader>s :write<CR>
+inoremap <leader>s <C-c>:write<CR>
+nnoremap <leader>q :quit<CR>
 nnoremap <F3> :source %<CR>
 nnoremap <S-F3> :bunload<CR>
-"""" insert mode too - I keep forgetting to  Esc first
-noremap! <C-s> <ESC>:write<CR>
-noremap! <localleader><C-s> <ESC>:wall<CR>
-"""" Can't use <C-q> to quit on Windows (mapped to visual block)
 
 
 "" Movements within buffers -----------
 
-""" Jump 12 lines and center
-nnoremap <C-j> 12gj12<C-e>zz
-nnoremap <C-k> 12gk12<C-y>zz
+""" Jump multiple screen lines and center
+nnoremap <C-j> 10gj10<C-e>zz
+nnoremap <C-k> 10gk10<C-y>zz
+
+""" Quick macro:  qq to record, q to stop, @q to play back
+nnoremap Q @q
+vnoremap Q :normal! @q<CR>
 
 """ Operate on screen lines, not logical lines
 noremap j gj
@@ -257,62 +261,62 @@ augroup text_settings
 	autocmd!
 
 	" general formatting
-	autocmd FileType text,markdown setlocal formatoptions=anq2
+	autocmd FileType text,markdown,mail,fountain setlocal formatoptions=nq2
 
 	" soft wrapping
-	autocmd FileType text,markdown setlocal nonumber
-	autocmd FileType text,markdown
+	autocmd FileType text,markdown,mail,fountain setlocal nonumber
+	autocmd FileType text,markdown,mail,fountain call ResetTextwidth()
+	autocmd FileType text,markdown,mail,fountain
 		\ setlocal wrap linebreak nolist
-		\ textwidth=1000000 wrapmargin=0 showbreak=
-	autocmd FileType text,markdown
+		\ wrapmargin=0 showbreak=
+	autocmd FileType text,markdown,mail,fountain
 		\ setlocal tabstop=5 shiftwidth=5
 		\ nosmartindent noautoindent nobreakindent
 
 	" ␣q, ␣Q autoreformat current paragraph, entire document
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>q igqip`^
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>Q iggVGgq`^
-
-	" autoreformat current paragraph when starting a new one
-	autocmd FileType text,markdown inoremap <buffer> <CR><CR> vipgqvip`>a<CR><CR>
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>q igqip`^
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>Q iggVGgq`^
 
 	" g( and g) jump to first (last) character in sentence
 	" g{ and g} jump to first (last) character in paragraph
 	" (default (,),{,} jump to last character *around* sentence/paragraph
-	autocmd FileType text,markdown nnoremap <buffer> g( vis`<
-	autocmd FileType text,markdown nnoremap <buffer> g) vis`>
-	autocmd FileType text,markdown nnoremap <buffer> g{ vip`<^
-	autocmd FileType text,markdown nnoremap <buffer> g} vip`>
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> g( vis`<
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> g) vis`>
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> g{ vip`<^
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> g} vip`>
 
 	" Quick-select inside, around sentences and paragraphs
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>( vis
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>) vas
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>{ vip
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>} vap
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>( vis
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>) vas
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>{ vip
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>} vap
 
-	" ␣O and ␣o reformat current paragraph, open a new one two lines above, below
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>O vipgqvip`<OO
-	autocmd FileType text,markdown nnoremap <buffer> <localleader>o vipgqvip`>oo
+	" ␣O and ␣o open a new para two lines above, below current
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>O vip`<OO
+	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>o vip`>oo
 
 	" ␣' and ␣" enquote visual selection
 	" U+2018, U+2019 are curly single quotes, U+201C & U+201D double
-	autocmd FileType text,markdown xnoremap <buffer> <localleader>' c'+'
-	autocmd FileType text,markdown xnoremap <buffer> <localleader>" c"+"
+	autocmd FileType text,markdown,mail,fountain xnoremap <buffer> <localleader>' c'+'
+	autocmd FileType text,markdown,mail,fountain xnoremap <buffer> <localleader>" c"+"
 	
 	" Visual selection: <C-b> for bold, <C-i> for italics
-	autocmd FileType text,markdown xnoremap <buffer> <C-i> c*+*
-	autocmd FileType text,markdown xnoremap <buffer> <C-b> c__+__
+	autocmd FileType text,markdown,mail,fountain xnoremap <buffer> <C-i> c*+*
+	autocmd FileType text,markdown,mail,fountain xnoremap <buffer> <C-b> c__+__
 
 	" leave cursor at end of selection following yank - allows pppp ...
-	autocmd FileType text,markdown noremap y y`]
+	autocmd FileType text,markdown,mail,fountain noremap y y`]
 
 	" gg, G jump to absolute beginning, end of file
-	autocmd FileType text,markdown noremap G G$
-	autocmd FileType text,markdown noremap gg gg0
+	autocmd FileType text,markdown,mail,fountain noremap G G$
+	autocmd FileType text,markdown,mail,fountain noremap gg gg0
 
 	" insert &nbsp; (U+00A0)
-	autocmd FileType text,markdown inoremap <leader><space> <C-v>u00A0
+	autocmd FileType text,markdown,mail,fountain inoremap <leader><space> <C-v>u00A0
 
-	" autoreformat when resetting textwidth
+	" capitalize last word
+	autocmd FileType text,markdown,mail,fountain inoremap <leader>c <Esc>viwU<Esc>ea
+
 
 augroup END
 "}}} Plain text
@@ -340,14 +344,14 @@ function! SelectEntireFile()
 	normal! ggVG
 	call setpos("'`", l:savedcurpos)
 endfunction
-nnoremap <C-a><C-a> :call SelectEntireFile()<CR>
+nnoremap <leader>a :call SelectEntireFile()<CR>
 
 
 "" Reset textwidth and reformat entire document in one command
-"" Usage: :TW 80
-if exists(':TW') | delcommand TW | endif
-command! -nargs=? TW call ResetTextwidth(<f-args>)
-cnoreabbrev tw TW
+"" Usage: :tw 80
+if exists(':Textwidth') | delcommand Textwidth | endif
+command! -nargs=? Textwidth call ResetTextwidth(<f-args>)
+cnoreabbrev tw Textwidth
 
 function! ResetTextwidth(...)
 
