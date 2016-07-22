@@ -7,7 +7,7 @@
 ""  Maintainer:	David C. Getzinger
 "" 		<dgetzinger_NOSPAM_777@gmail.com> (delete "_NOSPAM_")
 ""
-""  Last Mod:	Wednesday July 20, 2016 16:38:21 China Standard Time
+""  Last Mod:	Thursday July 21, 2016 13:48:51 China Standard Time
 ""
 ""  Usage:	Copy to $VIMFILES as .vimrc then restart vim
 ""
@@ -22,9 +22,11 @@ setlocal foldmethod=marker
 
 
 " Filetypes and syntax ------------------------------------------------------{{{
+
 filetype on				" enable auto filetype detection
 filetype plugin on			" load plugins for specific file types
 filetype plugin indent on		" filetype-specific indentation
+
 "}}}
 
 
@@ -65,6 +67,13 @@ set t_Co=256				" 256-color terminal
 silent! colorscheme belladonna		" silently ignore if not found
 syntax on				" auto syntax highlighting
 
+"" Source test file showing active highlight groups
+command! Hitest :source $VIMRUNTIME/syntax/hitest.vim
+cnoreabbrev ht Hitest
+
+" Works only if vim-HiLInkTrace is loaded
+nnoremap <C-p> :HLT!<CR>
+
 "}}}
 
 
@@ -90,6 +99,8 @@ set statusline+=\ %-{getcwd()}		" current working directory
 "" Alternatives to <Esc> --------------
 noremap! jk <ESC>
 noremap! jj <ESC>
+noremap! ;; <ESC>
+noremap! ii <ESC>
 
 "" Mapping ----------------------------
 "" Consider remapping CAPS LOCK key to CTRL
@@ -112,7 +123,6 @@ set autowrite				" autosave before switching buffers
 set exrc				" read exrc/vimrc from local dirs
 set fileformats=unix,dos		" read/write in this format
 set encoding=utf-8
-set relativenumber			" auto line numbering relative to cursor
 set showmode				" show current editing mode
 set showcmd				" show partial commands
 set cursorline				" highlight cursor line
@@ -122,14 +132,26 @@ set showmatch
 set listchars+=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 set nolist				" don't show unprintables until asked
 
+"" Line numbering ----------------------
+set relativenumber			" default
+nnoremap <C-n> :call CycleLineNumbering()<CR>
+""" i sets absolute numbering, <Esc> sets it back
+autocmd BufEnter,InsertLeave * set number relativenumber
+autocmd BufLeave,InsertEnter * set number norelativenumber
+
 "" Searching ---------------------------
 set ignorecase smartcase		" ignore case absent caps in search pattern
 set incsearch hlsearch
 set wrapscan		
 set gdefault				" substitutions are global by default
 
-""" <C-l> to turn off search results
-nnoremap <C-l> <C-u>:nohlsearch<CR><C-l>
+""" Remap * and # to search for current selection, not current word
+""" VSetSearch function defined below
+xnoremap * :<C-u>call <SID>VSetSearch('/')<CR>/<C-r>=@/<CR><CR>
+xnoremap # :<C-u>call <SID>VSetSearch('?')<CR>?<C-r>=@/<CR><CR>
+
+""" <C-l> to turn off search results and redraw screen
+nnoremap <C-l> :<C-u>nohlsearch<CR><C-l>
 
 "" Scrolling ---------------------------
 set scrolloff=3				" minimum context at top/bottom of screen
@@ -169,6 +191,7 @@ autocmd BufRead,BufNewFile *.fountain,*.ftn set filetype=fountain
 
 "" Pane actions -----------------------
 
+
 """ Automatically jump to new pane
 nnoremap <leader><bar> <C-w>v<C-w>l
 nnoremap <leader>_ <C-w>s<C-w>k
@@ -194,9 +217,8 @@ nnoremap <S-Left> :bp<CR>
 
 """ Save, source, unload
 """" normal mode
-nnoremap <leader>s :write<CR>
-inoremap <leader>s <C-c>:write<CR>
-nnoremap <leader>q :quit<CR>
+nnoremap <C-s> :write<CR>
+inoremap <C-s> <C-c>:write<CR>
 nnoremap <F3> :source %<CR>
 nnoremap <S-F3> :bunload<CR>
 
@@ -207,9 +229,16 @@ nnoremap <S-F3> :bunload<CR>
 nnoremap <C-j> 10gj10<C-e>zz
 nnoremap <C-k> 10gk10<C-y>zz
 
-""" Quick macro:  qq to record, q to stop, @q to play back
-nnoremap Q @q
-vnoremap Q :normal! @q<CR>
+"" Quick visual selection --------------
+"" Function definitions follow at bottom
+nnoremap c<space> viw
+nnoremap c. vis
+nnoremap c<CR> vip
+nnoremap cx :call SelectEntireFile()<CR>
+
+""" Expand visual selection back one char, word
+vnoremap <space>h <Esc>gvoho
+vnoremap <space>b <Esc>gvobo
 
 """ Operate on screen lines, not logical lines
 noremap j gj
@@ -223,35 +252,59 @@ noremap g$ $
 noremap 0 g0
 noremap g0 0
 
-""" Leave cursor at end of pastes
+""" Leave cursor at end of ...
 noremap P gP
 noremap p gp
 noremap gP P
 noremap gp p
+nnoremap y y`]
+vnoremap y y`]
+vnoremap U U`>
+vnoremap u u`>
 
 """ ^e and ^y work in insert mode too
 inoremap <C-e> <C-x><C-e>
 inoremap <C-y> <C-x><C-y>
 
-
-"" Quick visual selection --------------
-nnoremap <localleader>w viw
-nnoremap <localleader>W viW
-nnoremap <localleader>( vi(
-nnoremap <localleader>) va)
-nnoremap <localleader>{ vi{
-nnoremap <localleader>} va}
-nnoremap <localleader>[ vi[
-nnoremap <localleader>] va]
-nnoremap <localleader>< vi<
-nnoremap <localleader>> va>
-
-
-"" Editing commands -------------------
-
 """ <C-d> delete-forward one character, <C-f> one Word
 noremap! <C-d> <Del>
 noremap! <C-f> <C-o>dE
+
+""" ␣q, ␣Q autoreformat current paragraph, entire document
+nnoremap <localleader>q igqip`^
+nnoremap <localleader>Q iggVGgq`^
+
+""" g( and g) jump to first (last) character in sentence
+""" g{ and g} jump to first (last) character in paragraph
+""" (default (,),{,} jump to last character *around* sentence/paragraph
+nnoremap g( vis`<
+nnoremap g) vis`>
+nnoremap g{ vip`<^
+nnoremap g} vip`>
+
+""" Quick-select inside, around sentences and paragraphs
+nnoremap <localleader>( vis
+nnoremap <localleader>) vas
+nnoremap <localleader>{ vip
+nnoremap <localleader>} vap
+
+""" ␣O and ␣o open a new para two lines above, below current
+nnoremap <localleader>O vip`<OO
+nnoremap <localleader>o vip`>oo
+
+""" Quick macro:  qq to record, q to stop, @q to play back
+nnoremap Q @q
+vnoremap Q :normal! @q<CR>
+
+" gg, G jump to absolute beginning, end of file
+nnoremap G G$
+nnoremap gg gg0
+
+" insert &nbsp; (U+00A0)
+inoremap <leader><space> <C-v>u00A0
+
+" leave cursor at end of visual selection after capitalizing
+
 
 "}}} General editing
 
@@ -265,35 +318,12 @@ augroup text_settings
 
 	" soft wrapping
 	autocmd FileType text,markdown,mail,fountain setlocal nonumber
-	autocmd FileType text,markdown,mail,fountain call ResetTextwidth()
 	autocmd FileType text,markdown,mail,fountain
-		\ setlocal wrap linebreak nolist
+		\ setlocal wrap linebreak nolist textwidth=999
 		\ wrapmargin=0 showbreak=
 	autocmd FileType text,markdown,mail,fountain
 		\ setlocal tabstop=5 shiftwidth=5
 		\ nosmartindent noautoindent nobreakindent
-
-	" ␣q, ␣Q autoreformat current paragraph, entire document
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>q igqip`^
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>Q iggVGgq`^
-
-	" g( and g) jump to first (last) character in sentence
-	" g{ and g} jump to first (last) character in paragraph
-	" (default (,),{,} jump to last character *around* sentence/paragraph
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> g( vis`<
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> g) vis`>
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> g{ vip`<^
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> g} vip`>
-
-	" Quick-select inside, around sentences and paragraphs
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>( vis
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>) vas
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>{ vip
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>} vap
-
-	" ␣O and ␣o open a new para two lines above, below current
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>O vip`<OO
-	autocmd FileType text,markdown,mail,fountain nnoremap <buffer> <localleader>o vip`>oo
 
 	" ␣' and ␣" enquote visual selection
 	" U+2018, U+2019 are curly single quotes, U+201C & U+201D double
@@ -303,20 +333,6 @@ augroup text_settings
 	" Visual selection: <C-b> for bold, <C-i> for italics
 	autocmd FileType text,markdown,mail,fountain xnoremap <buffer> <C-i> c*+*
 	autocmd FileType text,markdown,mail,fountain xnoremap <buffer> <C-b> c__+__
-
-	" leave cursor at end of selection following yank - allows pppp ...
-	autocmd FileType text,markdown,mail,fountain noremap y y`]
-
-	" gg, G jump to absolute beginning, end of file
-	autocmd FileType text,markdown,mail,fountain noremap G G$
-	autocmd FileType text,markdown,mail,fountain noremap gg gg0
-
-	" insert &nbsp; (U+00A0)
-	autocmd FileType text,markdown,mail,fountain inoremap <leader><space> <C-v>u00A0
-
-	" capitalize last word
-	autocmd FileType text,markdown,mail,fountain inoremap <leader>c <Esc>viwU<Esc>ea
-
 
 augroup END
 "}}} Plain text
@@ -337,17 +353,36 @@ noremap! <leader>t <C-r>=TimeStamp()<CR>
 nnoremap <leader>t C<C-r>=TimeStamp()<CR><Esc>`[
 
 
-"" Quick visual select entire file
-"" Current cursor position saved in '`
+"" Cycle among nonumber, number and relativenumber
+function! CycleLineNumbering()
+	if (&number == 0) | set number norelativenumber
+	elseif (&relativenumber == 0) | set number relativenumber
+	else | set nonumber norelativenumber
+	endif
+endfunction
+command! CLN :call CycleLineNumbering()
+cnoreabbrev cln CLN
+
+
+"" Visual select entire file
+"" Return cursor to former position: ``
 function! SelectEntireFile()
 	let l:savedcurpos = getcurpos()
 	normal! ggVG
 	call setpos("'`", l:savedcurpos)
 endfunction
-nnoremap <leader>a :call SelectEntireFile()<CR>
 
 
-"" Reset textwidth and reformat entire document in one command
+"" Set search string equal to current selection, escaped
+function! s:VSetSearch(cmdType)
+	let l:saved = @s
+	normal! gv"sy
+	let @/ = '\V' . substitute(escape(@s, a:cmdType . '\'), '\n', '\\n', 'g')
+	let s = l:saved
+endfunction
+
+
+"" Reset textwidth
 "" Usage: :tw 80
 if exists(':Textwidth') | delcommand Textwidth | endif
 command! -nargs=? Textwidth call ResetTextwidth(<f-args>)
@@ -355,7 +390,7 @@ cnoreabbrev tw Textwidth
 
 function! ResetTextwidth(...)
 
-	let l:defaultWidth = 10000
+	let l:defaultWidth = 9999
 
 	if a:0 < 1 || a:1 < 0			" no arg or negative value supplied
 		let l:newWidth = l:defaultWidth
@@ -363,11 +398,7 @@ function! ResetTextwidth(...)
 		let l:newWidth = a:1 + 0	" coerce to number
 	endif
 	
-	" Reset textwidth and reformat
-	let l:savedcurpos = getcurpos()
 	exec "setlocal textwidth=" . l:newWidth
-	normal! ggVGgq
-	call setpos('.', l:savedcurpos)
 
 endfunction "ResetTextwidth
 
